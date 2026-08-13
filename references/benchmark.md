@@ -86,8 +86,46 @@ license: 原创整理（对比基于公开文档/仓库元数据，非逐行审�
 | ✅本轮 | 权力轴写法正式化（已落地 scene-multiview §三（补）+ beat-sheet 联动 + demo 落地） | 《斩仙台》实战 | 机位高低标注权力：语义映射表 + 三站落点 + 配方 + 反模式 + 门禁建议 |
 | ✅本轮 | 参考图锚定字段 `ref_images[]`（已落地：SKILL.md S3 契约 + demo 5 镜全带 + build_storyboard 自动从 ref_pack 抽取） | jimeng @引用 / Runway Gen-4 单图锁脸 | 每镜直连锚定图令牌 `char:<id>:<key>`，跨镜一致性对齐真生成器 |
 | ✅本轮 | 多角色（3+）轴线扩展（已落地：scene-multiview §四（补）+ demo 两场景 `char_positions`） | 三人对话轴线理论 | `char_positions` 屏幕站位 + 主线 A↔B 不变 + camera_side 第三人，越轴借位移 |
-| P2 | 儿童向门禁开关（`--child` 强校验价值收尾 beat + 排除 mature） | COPPA/儿童向纪律 | 当前儿童向仅靠人工纪律，无硬校验 |
+| ✅本轮 | 儿童向门禁开关（已实现 `--content-rating {normal,child}`，**默认 normal 零内容限制**；`--child` 等价别名强校验价值收尾 beat + 排除 mature；实证《纸嫁衣之夜》含举刀对峙/制伏等打斗镜头在默认模式正常产出，门禁通过） | COPPA/儿童向纪律 | 纯可选开关，不传则漫剧题材（含打斗/悬疑）完全自由 |
 | ✅本轮 | 镜头预算 / pacing 计算器（已落地：build_storyboard `--target-duration` + `allocate_durations`） | 平台时长集 | 按合法时长集把总预算分配到各镜，末镜加权更长 |
 | ✅本轮 | build_storyboard 接入 power_shift 自动选角（已落地：读 beat `power_dynamic`→选 low_angle/high_angle+slow_motion） | subject_aware_map.power_shift | 脚本按 dominate/submit/shift/equal 自动落权力轴 |
 
 > 诚实边界：以上对比基于公开文档与仓库元数据，**未对开源库做逐行代码审计或实跑输出质量比对**；打分为方法层主观评估，权重可按实际用途调整。NVP 借鉴了 ViMax/seedance/ai-shortfilm 的**编排与提示词组织思路**（MIT 兼容），ArcReel 仅学架构（AGPL 不抄代码），详见 `architecture-licenses.md`。
+
+## 六、实际产出质量对比（实跑 NVP + 他库产出形态刻画）
+
+> 补强「实际产出质量」分量：NVP 已在本环境**实跑**端到端（见第四节），本节把他库按其公开 README/文档刻画**产出 artifact 形态**，与 NVP 实测产物逐项比对。诚实边界同前——他库未 vendored、未逐行审计或实跑其输出，仅据文档/元数据刻画其产出结构与能力。
+
+### 6.1 NVP 实测产物（可复现）
+
+以 `examples/asset-first-demo/《纸嫁衣之夜》`（民国悬疑，含**举刀凶手、雨巷对峙、制伏凶手**等打斗/冲突镜头）实跑 `build_storyboard → resolve_ref_images → build_ffmpeg_concat`：
+
+| 产出文件 | 内容 | 质量信号 |
+|---|---|---|
+| `script.json` | 5 beats（Hook/Turn/Confront/Resolve/**PowerShift**），含 value 轴 + `power_dynamic` | 叙事结构完整，权力反转显式建模 |
+| `character_manifest.json` / `scene_manifest.json` | 三角色三视图 + 两场景正反打 | 资产优先，分镜只引用 id |
+| `storyboard.json` | 5 镜，每镜 `ref_images[]` 锚定令牌 + `negative_prompt` **29/29 IP 令牌覆盖** + 运镜/焦段/权力轴/时长 | 分镜即生成器就绪 prompt |
+| `storyboard.resolved.json` | `resolve_ref_images` 解析 **21/21** 锚定图 → 真实路径 | 跨镜锚定闭环 |
+| `concat.txt` + ffmpeg 命令 | 5 镜 120s / 16:9 / bilibili 拼接清单 | S5 合成脚手架就绪 |
+| 门禁（默认 normal） | ✅ 通过；打斗内容**零限制**（仅守版权 IP） | 证实 `--content-rating normal` 不打压题材 |
+
+→ **结论**：NVP 实测产物是「结构契约 + IP 防火墙 + 一致性锚点 + 权力轴 + 镜头预算」一体化的**可直接喂给生图/图生视频生成器的分镜工程包**。
+
+### 6.2 他库产出形态对照（据公开文档刻画）
+
+| 项目 / 许可证 | 产出 artifact 形态 | 结构化契约 | IP 防火墙 | 角色一致性锚 | 内容分级 | 终片生成 |
+|---|---|---|---|---|---|---|
+| **NVP（实测·原创）** | script + 3 manifest + storyboard(+resolved) + concat | ✅ Schema 式契约 + 门禁 | ✅ 29 令牌硬遮蔽 | ✅ `char:<id>:<key>` 三视图令牌 | ✅ normal/child 显式 | 脚手架就绪，生成步需外部 API |
+| **NovelCut**（竖屏短剧） | 7 阶段 JSON（events→skeleton→episodes→scripts→assets→storyboard，9:16） | ✅ 阶段化 JSON | ❌ 未内置 | ✅ 四视图参考 sheet | ❌ 未提及 | ❌ video 仍为 roadmap |
+| **ArcReel**（AGPL） | 角色/线索设计图→分镜图→视频片段→成片 + 剪映草稿 | ✅ project.json 状态机 | ❌ 未内置 | ✅ 角色设计图 + 线索追踪 | ❌ 未提及 | ✅ 多供应商视频 + 剪映草稿 |
+| **Dante**（MIT） | 小说分析 JSON→资产→视频片段→成片 | ⚠️ 简单 JSON | ❌ | ❌ | ❌ | ✅ 但锁死 Volcengine/Doubao |
+| **StoryDiffusion**（Apache-2.0） | 漫画画格 / 视频（条件图驱动） | ❌ 研究 notebook | ❌ | ✅ consistent self-attention | ❌ | ✅ 但需自供条件图 |
+| **AI Comic Factory**（已归档） | 漫画画格（panel） | ❌ 单 prompt | ❌ | ⚠️ 参考图上传 | ❌ | 画格非视频 |
+| **AutoShorts**（MIT） | 口播短视频（topic→script+voice+image） | ⚠️ topic JSON | ❌ | ❌ Pexels 图库 | ❌ | ✅ 但无角色一致性 |
+
+### 6.3 产出质量 verdict
+
+- **NVP 强于他库的实际产出点**：① 唯一把「IP 防火墙」做成**硬遮蔽 + 门禁强制覆盖**（29/29），规避版权翻车；② 唯一 `normal/child` 显式内容分级，**默认不打压打斗/悬疑等成人向题材**（已实证明）；③ 产出是**契约绑定 + 一致性锚点令牌**的工程包，而非散装 prompt，下游接任意生图/图生视频 API 即跑；④ 权力轴 + 镜头预算内建，分镜自带戏剧节奏。
+- **NVP 弱于他库的实际产出点**：① 终片渲染需外部 API（ArcReel / Dante 直接出片，NovelCut 视频仍为 roadmap）；② 无 Web UI / 异步队列 / 费用追踪（ArcReel 强）；③ 单一维护者，社区与多供应商开箱度不及 ArcReel；④ 角色一致性依赖「三视图令牌 + 下游生成器锁脸」，未在 NVP 内嵌一致生成模型（StoryDiffusion 在一致性算法层更强，但仅是方法、非流水线）。
+
+→ **一句话**：NVP 的「实际产出」在**结构严谨度、版权安全、题材自由度、下游可接性**上领先同类开源；短板在**终片闭环、可视化工作台、多供应商与社区**。这与第四节加权总分（NVP 4.91 领先）一致，且补上了此前「产出质量未经实证」的分量。

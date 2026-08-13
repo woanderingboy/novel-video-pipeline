@@ -1,0 +1,11 @@
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_001.mp4'
+duration 30
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_002.mp4'
+duration 30
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_003.mp4'
+duration 15
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_004.mp4'
+duration 30
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_005.mp4'
+duration 15
+file 'C:\Users\l9856\.workbuddy\skills\novel-video-pipeline\examples\asset-first-demo\clips\S1_005.mp4'
