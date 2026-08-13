@@ -1,0 +1,43 @@
+{
+  "scenes": [
+    {
+      "id": "scene_tea_house",
+      "name": "雨夜茶馆",
+      "geography": "一楼大堂，木桌八张呈棋盘式排布，东侧柜台，西侧通向后巷的偏门；沈昭坐北桌，凶手坐南桌，顾言立于中庭。",
+      "axis_of_action": "以沈昭(北)↔凶手(南)为人物的视线轴，180° 线沿南北向；摄影机须停留在该线西侧半圆，不得越轴。",
+      "char_positions": {
+        "shen_zhao": {"screen": "left", "side_of_axis": "action_line", "note": "主角，画面左看右，属主冲突线 A 端"},
+        "killer": {"screen": "right", "side_of_axis": "action_line", "note": "反派，画面右看左，属主冲突线 B 端"},
+        "gu_yan": {"screen": "center", "side_of_axis": "camera_side", "note": "助手，置相机侧（线同侧）作前景/反应，不参与 A↔B 视线交换"}
+      },
+      "views": {
+        "establishing": "远景定场：茶馆全景，雨丝斜打纸窗，八张木桌棋盘排布，暖黄灯笼光与冷蓝雨光对撞，点出沈昭北桌与凶手南桌的空间关系。",
+        "ots_a": "过沈昭肩拍凶手（南桌）：前景沈昭墨蓝肩背虚化，焦点落在南桌凶手搭在桌沿的手指与纸嫁衣残角。",
+        "ots_b": "过凶手肩拍沈昭（北桌）：前景凶手深褐肩线虚化，焦点沈昭持灯侧脸，泪痣与发夹在灯下清晰。",
+        "reverse": "反打凶手反应特写：凶手闻言瞳孔收缩，指节扣紧桌沿，空间上仍位于南桌轴线一侧。",
+        "insert": "细节插入：纸嫁衣内衬露出的活人指纹特写 + 茶碗水面倒映的灯笼碎影。"
+      },
+      "pairing": "茶馆对峙优先用 ots_a ↔ ots_b 正反打，insert 仅用于指纹/倒影线索揭示。"
+    },
+    {
+      "id": "scene_rain_alley",
+      "name": "雨巷对峙",
+      "geography": "窄巷南北走向，两侧青砖高墙，巷中段一盏残破路灯；沈昭居北口持灯，凶手居南端举刀，顾言自西侧墙缺口切入。",
+      "axis_of_action": "以沈昭(北)↔凶手(南)为动作轴，180° 线沿巷子南北向；摄影机置于东侧墙根半圆，越轴须借顾言西墙缺口的位移过渡。",
+      "char_positions": {
+        "shen_zhao": {"screen": "left", "side_of_axis": "action_line", "note": "北口持灯，画面左，属主冲突线 A 端"},
+        "killer": {"screen": "right", "side_of_axis": "action_line", "note": "南端举刀，画面右，属主冲突线 B 端"},
+        "gu_yan": {"screen": "center", "side_of_axis": "camera_side", "note": "西墙缺口切入，置相机侧，借位移合法越轴收束"}
+      },
+      "views": {
+        "establishing": "全景定场：雨巷南北纵深，残灯将沈昭与凶手拉成剪影，水洼反射刀光与灯光，交代北口与南端的对峙站位。",
+        "ots_a": "过沈昭肩拍凶手举刀：前景沈昭持灯臂虚化，焦点凶手刀刃雨水滑落与狰狞侧脸。",
+        "ots_b": "过凶手肩拍沈昭：前景刀刃虚化，焦点沈昭以灯影惑敌、神情镇定。",
+        "reverse": "反打顾言西墙缺口扑入制伏：打破纯南北轴，借位移合法越轴，收束冲突。",
+        "insert": "细节插入：青砖墙面的血迹指印 + 怀表链在雨中晃动的特写。"
+      },
+      "pairing": "雨巷对峙用 ots_a ↔ ots_b 高强度正反打，reverse 留给顾言介入的越轴转场。",
+      "power_notes": "沈昭(北口持灯)对凶手(南端举刀)先处弱势(high_angle)，顾言介入后沈昭转主导(low_angle)，可加 slow_motion 拉长反转。"
+    }
+  ]
+}

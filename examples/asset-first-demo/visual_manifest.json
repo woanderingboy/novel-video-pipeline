@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "file": "ref_shenzhao_threeview.png",
+      "license": "CC0",
+      "source": "internal generation, no third-party IP",
+      "width": 2048,
+      "height": 1024,
+      "sha256": "a1b2c3d4e5f60718293a4b5c6d7e8f901234567890abcdef1234567890abcdef0"
+    },
+    {
+      "file": "ref_guyan_threeview.png",
+      "license": "CC0",
+      "source": "internal generation, no third-party IP",
+      "width": 2048,
+      "height": 1024,
+      "sha256": "b2c3d4e5f60718293a4b5c6d7e8f901234567890abcdef1234567890abcdef01"
+    },
+    {
+      "file": "ref_teahouse_establishing.png",
+      "license": "Public Domain",
+      "source": "Met Museum open access architectural plate",
+      "width": 1600,
+      "height": 900,
+      "sha256": "c3d4e5f60718293a4b5c6d7e8f901234567890abcdef1234567890abcdef0123"
+    },
+    {
+      "file": "ref_rainalley_establishing.png",
+      "license": "CC0 1.0",
+      "source": "internal generation, no third-party IP",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "d4e5f60718293a4b5c6d7e8f901234567890abcdef1234567890abcdef012345"
+    }
+  ]
+}

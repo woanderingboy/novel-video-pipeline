@@ -1,0 +1,1052 @@
+{
+  "note": "S3 运镜库（cinematography library）。原创整理，可自由商用。综合以下开源最佳实践：Seedance Prompting Guide（15+ 原生运镜 + camera_fixed=false 语法）、aishotstudio 42 Camera Movements、zsky.ai（单一主运动规则）、jnmetacode/ai-shortfilm-prompts（真实镜头名 + 5 段式）、smixs/visual-skills（模型专属语法）。每个 beat 选 1 个主运动即可，组合运动多数模型会混乱。",
+  "rule_single_primary": "每镜只写 1 个主运动（primary movement）。如 'slow dolly-in' 或 'OTS eye-level'。组合 'pan while dolly + tilt' 会让 Seedance/Kling 等模型产出不稳定。例外：'orbit' 类本身含复合弧线，可单独成镜。",
+  "speed_modifiers": {
+    "note": "速度修饰是叠加在主运动上的时间参数，不是独立运镜。借鉴《斩仙台 AI 真人版》'仰拍拉特写 → 切慢动作'：关键对峙/揭示瞬间用 slow_motion 拉长情绪。",
+    "values": [
+      "normal",
+      "fast",
+      "slow_motion",
+      "time_ramp"
+    ],
+    "usage": "shot 的 camera_movement 写主运动 id，另用 speed 字段标修饰，如 {camera_movement: 'low_angle', speed: 'slow_motion'}。"
+  },
+  "categories": {
+    "static": "固定机位 / 静止",
+    "dolly": "推移（物理位移靠近/远离）",
+    "push_pull": "推近 / 拉远（缓慢微推微拉）",
+    "pan": "水平摇",
+    "tilt": "垂直摇",
+    "tracking": "跟拍（沿主体运动方向）",
+    "crane_jib": "升降臂 / 摇臂",
+    "orbit": "环绕 / 弧线",
+    "zoom": "变焦（光学，非位移）",
+    "handheld": "手持 / 肩扛",
+    "drone_aerial": "无人机 / 航拍",
+    "special": "特殊运动（OTS / 荷兰角 / 甩镜 / 变焦冲击 / 焦点转移等）"
+  },
+  "movements": [
+    {
+      "id": "static",
+      "name_en": "Static / Locked-off",
+      "name_zh": "固定机位",
+      "category": "static",
+      "best_for": [
+        "reaction",
+        "standoff",
+        "dialogue_beat"
+      ],
+      "desc": "相机完全不动，冷静观察感",
+      "prompt_en": "static locked-off shot, [SUBJECT] [ACTION], [STYLE]",
+      "prompt_zh": "固定机位，[角色] [动作]，冷静观察",
+      "lens": "50mm 标准定焦（中性视角，最稳）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「固定机位」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「固定机位」达到峰值——相机完全不动，冷静观察感",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "dolly_in",
+      "name_en": "Dolly In",
+      "name_zh": "推镜（位移靠近）",
+      "category": "dolly",
+      "best_for": [
+        "revelation",
+        "twist",
+        "intimacy",
+        "tension"
+      ],
+      "desc": "相机在轨道上物理靠近主体，制造亲密或揭示",
+      "prompt_en": "slow dolly-in toward [SUBJECT], [STYLE]",
+      "prompt_zh": "缓慢推镜靠近[角色]",
+      "lens": "35mm 或 24-70mm 变焦（位移透视感强）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「推镜（位移靠近）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「推镜（位移靠近）」达到峰值——相机在轨道上物理靠近主体，制造亲密或揭示",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "dolly_out",
+      "name_en": "Dolly Out / Pull Back",
+      "name_zh": "拉镜（位移远离）",
+      "category": "dolly",
+      "best_for": [
+        "reveal_scale",
+        "closing",
+        "lonely",
+        "establishing"
+      ],
+      "desc": "相机远离，揭示环境尺度或收尾孤独感",
+      "prompt_en": "slow dolly-out to reveal [SCENE / SCALE], [STYLE]",
+      "prompt_zh": "缓慢拉远揭示[场景/规模]",
+      "lens": "35mm 或 24-70mm 变焦（位移透视感强）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「拉镜（位移远离）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「拉镜（位移远离）」达到峰值——相机远离，揭示环境尺度或收尾孤独感",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "fast_dolly_in",
+      "name_en": "Fast Dolly In",
+      "name_zh": "快速推镜",
+      "category": "dolly",
+      "best_for": [
+        "shock",
+        "urgency",
+        "impact"
+      ],
+      "desc": "快速推近，紧迫/冲击",
+      "prompt_en": "fast dolly-in on [SUBJECT]'s face, urgent, [STYLE]",
+      "prompt_zh": "快速推近[角色]面部，紧迫感",
+      "lens": "35mm 或 24-70mm 变焦（位移透视感强）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「快速推镜」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「快速推镜」达到峰值——快速推近，紧迫/冲击",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "push_in",
+      "name_en": "Push In",
+      "name_zh": "微推（极缓）",
+      "category": "push_pull",
+      "best_for": [
+        "tension",
+        "focus",
+        "suspense"
+      ],
+      "desc": "极缓、克制的微推，聚焦注意力",
+      "prompt_en": "very slow subtle push-in, building tension, [STYLE]",
+      "prompt_zh": "极缓微推，积蓄张力",
+      "lens": "85mm / 70-200mm 长焦（空间压缩、呼吸感）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「微推（极缓）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「微推（极缓）」达到峰值——极缓、克制的微推，聚焦注意力",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "pull_out",
+      "name_en": "Pull Out",
+      "name_zh": "微拉（极缓）",
+      "category": "push_pull",
+      "best_for": [
+        "reveal_scale",
+        "closing",
+        "isolation"
+      ],
+      "desc": "极缓微拉，收束或显孤立",
+      "prompt_en": "very slow subtle pull-out, revealing scale, [STYLE]",
+      "prompt_zh": "极缓微拉，显规模",
+      "lens": "85mm / 70-200mm 长焦（空间压缩、呼吸感）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「微拉（极缓）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「微拉（极缓）」达到峰值——极缓微拉，收束或显孤立",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "pan_left",
+      "name_en": "Pan Left",
+      "name_zh": "向左摇",
+      "category": "pan",
+      "best_for": [
+        "survey",
+        "follow_action",
+        "reveal_width"
+      ],
+      "desc": "机位固定水平左摇，扫景/跟动作",
+      "prompt_en": "camera pans slowly left across [SCENE], [STYLE]",
+      "prompt_zh": "相机缓慢向左摇过[场景]",
+      "lens": "24-70mm 变焦（水平扫场，广角端更张力）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「向左摇」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「向左摇」达到峰值——机位固定水平左摇，扫景/跟动作",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "pan_right",
+      "name_en": "Pan Right",
+      "name_zh": "向右摇",
+      "category": "pan",
+      "best_for": [
+        "survey",
+        "follow_action",
+        "reveal_width"
+      ],
+      "desc": "机位固定水平右摇",
+      "prompt_en": "camera pans right to follow [SUBJECT], [STYLE]",
+      "prompt_zh": "相机向右摇跟随[角色]",
+      "lens": "24-70mm 变焦（水平扫场，广角端更张力）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「向右摇」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「向右摇」达到峰值——机位固定水平右摇",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "tilt_up",
+      "name_en": "Tilt Up",
+      "name_zh": "向上摇",
+      "category": "tilt",
+      "best_for": [
+        "reveal_tall",
+        "power",
+        "grandeur"
+      ],
+      "desc": "垂直上摇，揭示高大主体/威压",
+      "prompt_en": "camera tilts up from ground to reveal [SUBJECT / STRUCTURE], [STYLE]",
+      "prompt_zh": "相机由下向上摇揭示[角色/建筑]",
+      "lens": "24-70mm 变焦（垂直扫场）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「向上摇」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「向上摇」达到峰值——垂直上摇，揭示高大主体/威压",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "tilt_down",
+      "name_en": "Tilt Down",
+      "name_zh": "向下摇",
+      "category": "tilt",
+      "best_for": [
+        "reveal_below",
+        "descent",
+        "overview"
+      ],
+      "desc": "垂直下摇，揭示下方/俯瞰",
+      "prompt_en": "camera tilts down from above to reveal [SCENE BELOW], [STYLE]",
+      "prompt_zh": "相机由上向下摇揭示[下方场景]",
+      "lens": "24-70mm 变焦（垂直扫场）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「向下摇」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「向下摇」达到峰值——垂直下摇，揭示下方/俯瞰",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "tracking",
+      "name_en": "Tracking Shot",
+      "name_zh": "跟拍",
+      "category": "tracking",
+      "best_for": [
+        "action",
+        "walk",
+        "chase",
+        "journey"
+      ],
+      "desc": "相机沿运动主体平行移动",
+      "prompt_en": "side tracking shot following [SUBJECT] [ACTION], [STYLE]",
+      "prompt_zh": "侧跟拍，跟随[角色][动作]",
+      "lens": "35mm / 24-70mm（平行跟拍，畸变小）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「跟拍」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「跟拍」达到峰值——相机沿运动主体平行移动",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "leading_shot",
+      "name_en": "Leading Shot (Backward Tracking)",
+      "name_zh": "后退跟拍",
+      "category": "tracking",
+      "best_for": [
+        "walk_toward",
+        "approach",
+        "mystery"
+      ],
+      "desc": "相机后退匹配主体前进速度",
+      "prompt_en": "camera moves backward matching [SUBJECT]'s pace, [STYLE]",
+      "prompt_zh": "相机后退匹配[角色]步伐",
+      "lens": "35mm / 24-70mm（平行跟拍，畸变小）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「后退跟拍」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「后退跟拍」达到峰值——相机后退匹配主体前进速度",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "following_shot",
+      "name_en": "Following Shot (Forward Tracking)",
+      "name_zh": "前进跟拍",
+      "category": "tracking",
+      "best_for": [
+        "walk_away",
+        "pursuit",
+        "procession"
+      ],
+      "desc": "相机在主体后跟随",
+      "prompt_en": "camera follows behind [SUBJECT] [ACTION], [STYLE]",
+      "prompt_zh": "相机在[角色]身后跟随",
+      "lens": "35mm / 24-70mm（平行跟拍，畸变小）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「前进跟拍」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「前进跟拍」达到峰值——相机在主体后跟随",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "crane_up",
+      "name_en": "Crane Up",
+      "name_zh": "升降臂上升",
+      "category": "crane_jib",
+      "best_for": [
+        "establishing",
+        "grand_reveal",
+        "epic"
+      ],
+      "desc": "摇臂升起，建立镜头/宏大揭示",
+      "prompt_en": "crane shot rising upward to reveal [SCENE], [STYLE]",
+      "prompt_zh": "摇臂上升揭示[场景]",
+      "lens": "16-35mm 广角（升降宏大、边缘张力）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「升降臂上升」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「升降臂上升」达到峰值——摇臂升起，建立镜头/宏大揭示",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "crane_down",
+      "name_en": "Crane Down",
+      "name_zh": "升降臂下降",
+      "category": "crane_jib",
+      "best_for": [
+        "landing",
+        "descent",
+        "intimate_reveal"
+      ],
+      "desc": "摇臂下降落到主体",
+      "prompt_en": "crane shot descending slowly onto [SUBJECT], [STYLE]",
+      "prompt_zh": "摇臂缓缓下降落到[角色]",
+      "lens": "16-35mm 广角（升降宏大、边缘张力）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「升降臂下降」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「升降臂下降」达到峰值——摇臂下降落到主体",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "pedestal_up",
+      "name_en": "Pedestal Up",
+      "name_zh": "垂直升",
+      "category": "crane_jib",
+      "best_for": [
+        "rise_to_eye",
+        "empower"
+      ],
+      "desc": "相机垂直直上（腰到眼）",
+      "prompt_en": "pedestal up from waist to eye level on [SUBJECT], [STYLE]",
+      "prompt_zh": "相机由腰升至眼平",
+      "lens": "16-35mm 广角（升降宏大、边缘张力）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「垂直升」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「垂直升」达到峰值——相机垂直直上（腰到眼）",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "orbit_180",
+      "name_en": "Orbit 180 (Half Spin)",
+      "name_zh": "半圆环绕",
+      "category": "orbit",
+      "best_for": [
+        "reveal_profile",
+        "hero",
+        "transformation"
+      ],
+      "desc": "相机绕主体半圈，从背后到正脸",
+      "prompt_en": "slow 180-degree orbit around [SUBJECT], from behind to facing, eye level, [STYLE]",
+      "prompt_zh": "缓慢 180 度环绕[角色]，由背后转正面",
+      "lens": "35mm / 50mm（环绕，兼顾透视与稳定）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「半圆环绕」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「半圆环绕」达到峰值——相机绕主体半圈，从背后到正脸",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "orbit_360",
+      "name_en": "Orbit 360 (Full Spin)",
+      "name_zh": "全环绕",
+      "category": "orbit",
+      "best_for": [
+        "hero",
+        "product",
+        "power_moment"
+      ],
+      "desc": "相机绕主体整圈",
+      "prompt_en": "slow 360 orbit around [SUBJECT], [STYLE]",
+      "prompt_zh": "缓慢 360 环绕[角色]",
+      "lens": "35mm / 50mm（环绕，兼顾透视与稳定）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「全环绕」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「全环绕」达到峰值——相机绕主体整圈",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "cinematic_arc",
+      "name_en": "Slow Cinematic Arc",
+      "name_zh": "缓慢弧线",
+      "category": "orbit",
+      "best_for": [
+        "reveal_side",
+        "transition",
+        "elegant"
+      ],
+      "desc": "宽弧线移动揭示侧脸",
+      "prompt_en": "slow cinematic arc moving to reveal [SUBJECT]'s side profile, [STYLE]",
+      "prompt_zh": "缓慢弧线揭示[角色]侧影",
+      "lens": "35mm / 50mm（环绕，兼顾透视与稳定）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「缓慢弧线」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「缓慢弧线」达到峰值——宽弧线移动揭示侧脸",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "zoom_in",
+      "name_en": "Zoom In",
+      "name_zh": "推焦（光学）",
+      "category": "zoom",
+      "best_for": [
+        "emphasis",
+        "isolation",
+        "dread"
+      ],
+      "desc": "焦距放大，主体变大（非位移）",
+      "prompt_en": "smooth optical zoom in on [SUBJECT], [STYLE]",
+      "prompt_zh": "平滑光学推焦[角色]",
+      "lens": "70-200mm 长焦（光学变焦，背景压缩）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「推焦（光学）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「推焦（光学）」达到峰值——焦距放大，主体变大（非位移）",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "zoom_out",
+      "name_en": "Zoom Out",
+      "name_zh": "拉焦（光学）",
+      "category": "zoom",
+      "best_for": [
+        "distance",
+        "farewell",
+        "context"
+      ],
+      "desc": "焦距拉远",
+      "prompt_en": "smooth optical zoom out to show distance, [STYLE]",
+      "prompt_zh": "平滑光学拉焦显距离",
+      "lens": "70-200mm 长焦（光学变焦，背景压缩）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「拉焦（光学）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「拉焦（光学）」达到峰值——焦距拉远",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "snap_zoom",
+      "name_en": "Snap Zoom (Crash Zoom)",
+      "name_zh": "急速推焦",
+      "category": "zoom",
+      "best_for": [
+        "shock",
+        "punchline",
+        "realization"
+      ],
+      "desc": "瞬间推到眼部",
+      "prompt_en": "snap crash zoom directly into [SUBJECT]'s eyes, [STYLE]",
+      "prompt_zh": "急速推焦至[角色]双眼",
+      "lens": "70-200mm 长焦（光学变焦，背景压缩）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「急速推焦」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「急速推焦」达到峰值——瞬间推到眼部",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "dolly_zoom",
+      "name_en": "Dolly Zoom (Vertigo / Zolly)",
+      "name_zh": "希区柯克变焦",
+      "category": "zoom",
+      "best_for": [
+        "unease",
+        "revelation",
+        "disorientation"
+      ],
+      "desc": "推镜同时拉焦，背景畸变（眩晕效应）",
+      "prompt_en": "dolly zoom on [SUBJECT]'s face, background stretching unnaturally, [STYLE]",
+      "prompt_zh": "希区柯克变焦，背景异常拉伸",
+      "lens": "70-200mm 长焦（光学变焦，背景压缩）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「希区柯克变焦」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「希区柯克变焦」达到峰值——推镜同时拉焦，背景畸变（眩晕效应）",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "rack_focus",
+      "name_en": "Rack Focus",
+      "name_zh": "焦点转移",
+      "category": "special",
+      "best_for": [
+        "attention_shift",
+        "depth",
+        "reveal_detail"
+      ],
+      "desc": "焦平面前景↔背景切换",
+      "prompt_en": "rack focus from foreground [OBJ_A] to background [SUBJECT], [STYLE]",
+      "prompt_zh": "焦点由前景[物]转到背景[角色]",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「焦点转移」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「焦点转移」达到峰值——焦平面前景↔背景切换",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "handheld",
+      "name_en": "Handheld / Documentary",
+      "name_zh": "手持",
+      "category": "handheld",
+      "best_for": [
+        "urgency",
+        "realism",
+        "intimacy",
+        "chaos"
+      ],
+      "desc": "有意轻微晃动，纪实/紧迫",
+      "prompt_en": "handheld shaky camera, documentary feel, [SUBJECT] [ACTION], [STYLE]",
+      "prompt_zh": "手持微晃，纪实感",
+      "lens": "35mm / 24-70mm（手持纪实，微晃自然）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「手持」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「手持」达到峰值——有意轻微晃动，纪实/紧迫",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "aerial",
+      "name_en": "Aerial / Drone",
+      "name_zh": "航拍",
+      "category": "drone_aerial",
+      "best_for": [
+        "establishing",
+        "scale",
+        "geography",
+        "epic"
+      ],
+      "desc": "高位移动，建立地理/规模",
+      "prompt_en": "aerial drone shot sweeping over [LANDSCAPE / CITY], [STYLE]",
+      "prompt_zh": "航拍掠过[地貌/城市]",
+      "lens": "16-35mm 广角（航拍，显规模与地理）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「航拍」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「航拍」达到峰值——高位移动，建立地理/规模",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "drone_reveal",
+      "name_en": "Epic Drone Reveal",
+      "name_zh": "史诗航拍揭示",
+      "category": "drone_aerial",
+      "best_for": [
+        "grand_reveal",
+        "arrival",
+        "scale"
+      ],
+      "desc": "升起并俯拍揭示场景",
+      "prompt_en": "epic drone reveal, rising and tilting down to reveal [SCENE], [STYLE]",
+      "prompt_zh": "史诗航拍，升起俯拍揭示[场景]",
+      "lens": "16-35mm 广角（航拍，显规模与地理）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「史诗航拍揭示」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「史诗航拍揭示」达到峰值——升起并俯拍揭示场景",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "top_down",
+      "name_en": "Top Down (God's Eye)",
+      "name_zh": "俯视（上帝视角）",
+      "category": "drone_aerial",
+      "best_for": [
+        "overview",
+        "pattern",
+        "isolation"
+      ],
+      "desc": "垂直俯拍",
+      "prompt_en": "top-down god's-eye view, slow twist, [SCENE], [STYLE]",
+      "prompt_zh": "俯视上帝视角，缓慢旋转",
+      "lens": "16-35mm 广角（航拍，显规模与地理）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「俯视（上帝视角）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「俯视（上帝视角）」达到峰值——垂直俯拍",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "fpv_dive",
+      "name_en": "FPV Dive",
+      "name_zh": "FPV 俯冲",
+      "category": "drone_aerial",
+      "best_for": [
+        "action",
+        "speed",
+        "impact"
+      ],
+      "desc": "穿越机沿垂直结构俯冲",
+      "prompt_en": "FPV drone aggressive dive down [STRUCTURE], [STYLE]",
+      "prompt_zh": "FPV 俯冲掠下[建筑]",
+      "lens": "16-35mm 广角（航拍，显规模与地理）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「FPV 俯冲」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「FPV 俯冲」达到峰值——穿越机沿垂直结构俯冲",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "whip_pan",
+      "name_en": "Whip Pan",
+      "name_zh": "甩镜",
+      "category": "special",
+      "best_for": [
+        "transition",
+        "energy",
+        "surprise",
+        "time_skip"
+      ],
+      "desc": "极快横向甩动带运动模糊，转场/能量",
+      "prompt_en": "whip pan with motion blur transitioning to [NEXT], [STYLE]",
+      "prompt_zh": "带运动模糊的甩镜转场",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「甩镜」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「甩镜」达到峰值——极快横向甩动带运动模糊，转场/能量",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "dutch_angle",
+      "name_en": "Dutch Angle (Roll)",
+      "name_zh": "荷兰角（倾斜）",
+      "category": "special",
+      "best_for": [
+        "tension",
+        "unease",
+        "disorientation",
+        "menace"
+      ],
+      "desc": "Z 轴倾斜，不安/威胁",
+      "prompt_en": "dutch angle, tilted camera, unease and menace, [SUBJECT], [STYLE]",
+      "prompt_zh": "荷兰角倾斜，不安感",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「荷兰角（倾斜）」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「荷兰角（倾斜）」达到峰值——Z 轴倾斜，不安/威胁",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "ots",
+      "name_en": "Over-the-Shoulder (OTS)",
+      "name_zh": "过肩镜头",
+      "category": "special",
+      "best_for": [
+        "dialogue",
+        "confrontation",
+        "reaction"
+      ],
+      "desc": "从 A 肩后拍 B，对话/对峙主句型",
+      "prompt_en": "over-the-shoulder shot over [FG_CHAR]'s shoulder, framing [SUBJECT], eye-level, [STYLE]",
+      "prompt_zh": "过[前景角色]肩拍[主体]，眼平",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「过肩镜头」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「过肩镜头」达到峰值——从 A 肩后拍 B，对话/对峙主句型",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "ots_reverse",
+      "name_en": "OTS Reverse",
+      "name_zh": "过肩反打",
+      "category": "special",
+      "best_for": [
+        "dialogue",
+        "confrontation",
+        "reaction"
+      ],
+      "desc": "OTS 的反向视角，保持 180 度轴线",
+      "prompt_en": "reverse over-the-shoulder over [FG_CHAR]'s shoulder, framing [SUBJECT], eye-level, [STYLE]",
+      "prompt_zh": "反向过肩拍[主体]，保持轴线",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「过肩反打」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「过肩反打」达到峰值——OTS 的反向视角，保持 180 度轴线",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "two_shot",
+      "name_en": "Two Shot",
+      "name_zh": "双人镜头",
+      "category": "special",
+      "best_for": [
+        "relationship",
+        "standoff",
+        "establish_pair"
+      ],
+      "desc": "同框两人，建立关系/对峙",
+      "prompt_en": "medium two-shot of [CHAR_A] and [CHAR_B], [MOOD], [STYLE]",
+      "prompt_zh": "中景双人[角色A][角色B]",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「双人镜头」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「双人镜头」达到峰值——同框两人，建立关系/对峙",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "pov",
+      "name_en": "POV / First-Person",
+      "name_zh": "主观视角",
+      "category": "special",
+      "best_for": [
+        "immersion",
+        "subjective",
+        "chase"
+      ],
+      "desc": "相机即角色眼睛",
+      "prompt_en": "POV first-person, camera as [CHARACTER]'s eyes, [SCENE AHEAD], [STYLE]",
+      "prompt_zh": "主观视角，相机即[角色]之眼",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「主观视角」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「主观视角」达到峰值——相机即角色眼睛",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "insert",
+      "name_en": "Insert (Detail)",
+      "name_zh": "细节插入",
+      "category": "special",
+      "best_for": [
+        "prop_focus",
+        "transition",
+        "clue"
+      ],
+      "desc": "超近景道具/细节",
+      "prompt_en": "insert shot, extreme close-up on [PROP / DETAIL], [STYLE]",
+      "prompt_zh": "细节插入，超近景[道具/细节]",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「细节插入」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「细节插入」达到峰值——超近景道具/细节",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "reveal_from_behind",
+      "name_en": "Reveal from Behind",
+      "name_zh": "侧移揭示",
+      "category": "special",
+      "best_for": [
+        "entrance",
+        "mystery",
+        "reveal"
+      ],
+      "desc": "从前景物后横移揭示场景",
+      "prompt_en": "camera slides laterally from behind [FG OBJECT] to reveal [SCENE], [STYLE]",
+      "prompt_zh": "相机从[前景物]后横移揭示[场景]",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「侧移揭示」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「侧移揭示」达到峰值——从前景物后横移揭示场景",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "low_angle",
+      "name_en": "Low Angle",
+      "name_zh": "低角度",
+      "category": "special",
+      "best_for": [
+        "power",
+        "scale",
+        "menace",
+        "hero"
+      ],
+      "desc": "仰拍，赋予力量/威压",
+      "prompt_en": "low-angle shot of [SUBJECT] looking up, power and scale, [STYLE]",
+      "prompt_zh": "低角度仰拍[角色]，力量感",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「低角度」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「低角度」达到峰值——仰拍，赋予力量/威压",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "high_angle",
+      "name_en": "High Angle",
+      "name_zh": "高角度",
+      "category": "special",
+      "best_for": [
+        "vulnerability",
+        "overview",
+        "context"
+      ],
+      "desc": "俯拍，弱化/交代",
+      "prompt_en": "high-angle overhead of [SUBJECT] below, vulnerability, [STYLE]",
+      "prompt_zh": "高角度俯拍[角色]，脆弱感",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「高角度」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「高角度」达到峰值——俯拍，弱化/交代",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "bullet_time",
+      "name_en": "Bullet Time",
+      "name_zh": "子弹时间",
+      "category": "special",
+      "best_for": [
+        "climax",
+        "freeze_moment",
+        "impact"
+      ],
+      "desc": "超慢动作 + 环绕，凝固瞬间",
+      "prompt_en": "bullet time, frozen moment, ultra slow motion, camera orbit, [STYLE]",
+      "prompt_zh": "子弹时间，超慢动作环绕",
+      "lens": "依情境（OTS 50mm / 低角 24mm 广角 / 荷兰角 35mm）",
+      "stages": {
+        "setup": "起势构图：主体入画、交代空间关系，机位与眼睛高度/视线轴先就位",
+        "motion_start": "运镜启动：相机开始「子弹时间」起势，速度克制、避免突兀",
+        "peak": "运动高潮：「子弹时间」达到峰值——超慢动作 + 环绕，凝固瞬间",
+        "settle": "落定构图：相机稳定于新构图，主体情绪/动作落点清晰",
+        "exit": "收束：保持或缓出，留白衔接下一镜（转场可用 whip_pan / insert）"
+      }
+    },
+    {
+      "id": "slow_motion",
+      "name_en": "Slow Motion (Speed Modifier)",
+      "name_zh": "慢动作[速度修饰]",
+      "category": "special",
+      "best_for": [
+        "emphasis",
+        "impact",
+        "reveal_detail",
+        "power_moment"
+      ],
+      "desc": "时间减速修饰，叠加在任意主运动上（如 low_angle + slow_motion）；战力对峙拉特写情绪拉长",
+      "prompt_en": "slow motion, [PRIMARY MOVEMENT] on [SUBJECT], time dilated, [STYLE]",
+      "prompt_zh": "慢动作，[主运动]配合[角色]，时间拉长",
+      "lens": "（速度修饰，非独立机位；叠加任意主运动，无需单独焦段）",
+      "stages": {
+        "setup": "主运动正常起势构图（slow_motion 不改变机位）",
+        "motion_start": "时间开始减速，动作被拉长",
+        "peak": "运动峰值处时间凝滞，情绪/细节被放大",
+        "settle": "主体仍按主运动落定，只是更慢",
+        "exit": "恢复正常速度或缓出，衔接下一镜"
+      }
+    }
+  ],
+  "subject_aware_map": {
+    "Hook": [
+      "dolly_in",
+      "crane_down",
+      "static",
+      "low_angle",
+      "reveal_from_behind"
+    ],
+    "Setup": [
+      "two_shot",
+      "static",
+      "pan_right",
+      "tracking"
+    ],
+    "Stakes": [
+      "ots",
+      "ots_reverse",
+      "dutch_angle",
+      "push_in"
+    ],
+    "Twist": [
+      "fast_dolly_in",
+      "snap_zoom",
+      "dolly_zoom",
+      "rack_focus",
+      "insert"
+    ],
+    "Payoff": [
+      "crane_up",
+      "orbit_180",
+      "low_angle",
+      "whip_pan",
+      "two_shot"
+    ],
+    "Cliff": [
+      "push_in",
+      "dolly_out",
+      "high_angle",
+      "pov",
+      "insert"
+    ],
+    "reaction": [
+      "static",
+      "push_in",
+      "low_angle"
+    ],
+    "confrontation": [
+      "ots",
+      "ots_reverse",
+      "two_shot",
+      "dutch_angle"
+    ],
+    "dialogue": [
+      "ots",
+      "ots_reverse",
+      "two_shot"
+    ],
+    "action": [
+      "tracking",
+      "following_shot",
+      "handheld",
+      "fpv_dive",
+      "whip_pan"
+    ],
+    "revelation": [
+      "dolly_in",
+      "crane_up",
+      "rack_focus",
+      "zoom_in"
+    ],
+    "power_shift": [
+      "low_angle",
+      "high_angle",
+      "crane_up",
+      "tilt_up",
+      "slow_motion"
+    ],
+    "establishing": [
+      "aerial",
+      "drone_reveal",
+      "crane_up",
+      "wide_static",
+      "dolly_out"
+    ]
+  },
+  "platform_notes": {
+    "seedance": {
+      "camera_fixed": false,
+      "note": "含运镜必须设 camera_fixed=false，否则忽略运动指令。原生支持 15+ 运镜（dolly/pan/tilt/crane/tracking/orbit/zoom/rack focus/dutch/handheld/whip/dolly zoom/aerial/pov）。用自然语句描述：'The camera slowly pans left to reveal the cityscape.'"
+    },
+    "kling": {
+      "note": "运镜语法宽松，自然语句即可；支持首尾帧控制做图生视频转场。参考图权重 0.8–1.0 锁脸。"
+    },
+    "veo": {
+      "note": "运镜描述需简洁、电影化；偏好单一主运动 + 明确光线。"
+    },
+    "jimeng": {
+      "note": "即梦 @引用系统最多 9 张参考图，为每个主要角色配 2–3 张锚定图（正面近景/侧面/全身）即可跨镜稳定。"
+    },
+    "runway": {
+      "note": "Gen-4 单张参考图即锁脸/服装/身形，跨场景稳定；极端表情易微崩。"
+    }
+  },
+  "shot_size_glossary": {
+    "EWS": "Extreme Wide Shot 大远景（显环境/规模）",
+    "WS": "Wide Shot 远景（全身+环境）",
+    "MS": "Medium Shot 中景（腰以上）",
+    "MCU": "Medium Close-Up 中近景（胸以上）",
+    "CU": "Close-Up 近景（头肩）",
+    "ECU": "Extreme Close-Up 大特写（眼/手/道具）"
+  },
+  "lens_and_stages_guide": "每项 movement 现带 lens（真实镜头/焦段推荐）与 stages（5 段式提示词骨架：setup/motion_start/peak/settle/exit）。写 S3 prompt 时，把 stages 五段按顺序拼成一句自然语言，并把 lens 焦段写入相机参数，可显著提升文生视频模型的运镜稳定与可控性（对标 ai-shortfilm-prompts）。示例：low_angle 的 peak='仰拍达到峰值——仰拍，赋予力量/威压'，lens='24mm 广角'。"
+}

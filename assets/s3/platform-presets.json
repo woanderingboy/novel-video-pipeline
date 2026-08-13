@@ -1,0 +1,32 @@
+{
+  "note": "S3 分镜 Skill 按目标平台读取 aspect_ratio + duration 预设，套用 template_library.json 模板句。原创整理，可自由商用。横屏漫剧（16:9）为默认主形态，对应 bilibili。",
+  "default": "bilibili",
+  "platforms": {
+    "bilibili": {
+      "name": "B站 / YouTube（横屏漫剧默认）",
+      "aspect_ratio": "16:9",
+      "resolution": "1920x1080",
+      "durations": [15, 30, 60, 120]
+    },
+    "douyin": {
+      "name": "抖音 / 视频号 / TikTok（竖屏）",
+      "aspect_ratio": "9:16",
+      "resolution": "1080x1920",
+      "durations": [5, 10, 15, 30, 60]
+    },
+    "xiaohongshu": {
+      "name": "小红书 / Instagram",
+      "aspect_ratio": "3:4",
+      "resolution": "1080x1440",
+      "durations": [15, 30]
+    },
+    "square": {
+      "name": "正方形（通用）",
+      "aspect_ratio": "1:1",
+      "resolution": "1080x1080",
+      "durations": [10, 15, 30]
+    }
+  },
+  "shot_duration_default": 15,
+  "usage": "S3 Skill: 选定 platform（默认 bilibili=横屏 16:9）-> 取 aspect_ratio 填入模板 [RATIO] 占位符；总时长 = shot 数 × shot_duration，落在 durations 区间则合法。"
+}

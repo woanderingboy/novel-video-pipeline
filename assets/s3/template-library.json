@@ -1,0 +1,661 @@
+{
+  "composition": {
+    "note": "景别词表 + 运镜搭配建议。完整运镜库见 camera-movements.json（40+ 运镜 + 节拍→运镜映射 + 平台语法）。铁律：每镜只取 1 个主运镜。",
+    "shot_size": {
+      "EWS": "Extreme Wide Shot 大远景（显环境/规模）",
+      "WS": "Wide Shot 远景（全身+环境）",
+      "MS": "Medium Shot 中景（腰以上）",
+      "MCU": "Medium Close-Up 中近景（胸以上）",
+      "CU": "Close-Up 近景（头肩）",
+      "ECU": "Extreme Close-Up 大特写（眼/手/道具）"
+    },
+    "pairing": {
+      "dialogue_confrontation": "OTS / OTS reverse + MCU/MS；成对出现保持 180 度轴线（见 scene-multiview.md）",
+      "reveal_power": "low_angle / crane_up / orbit_180 + WS/EWS",
+      "intimacy_tension": "push_in / dolly_in + CU/MCU",
+      "detail_clue": "insert + ECU + rack_focus",
+      "action_chase": "tracking / following_shot / handheld + WS/MS",
+      "establishing": "aerial / drone_reveal / crane_up + EWS/WS"
+    },
+    "rule_single_primary": "每镜只写 1 个主运镜（如 'slow dolly-in' 或 'OTS eye-level'）。组合 'pan while dolly + tilt' 会让 Seedance/Kling 等模型产出不稳定。例外：orbit 类本身含复合弧线，可单独成镜。",
+    "transitions": {
+      "note": "段间衔接技法（借鉴《万物生》段间遮罩）。用于把多镜/多段连成一部片，避免跳切。",
+      "masks": {
+        "black_wipe": "纯黑遮罩切：最稳的转场，适合强时间跳接 / 章节分隔",
+        "white_flash": "纯白闪切：适合高潮爆发 / 回忆切入",
+        "match_cut": "贴镜遮罩（match cut）：用相似构图/动作衔接两镜，无缝连戏"
+      }
+    },
+    "naming": {
+      "note": "命名铁律法（借鉴《万物生》）：给每条约束 / 镜头起具体名字，AI 服从度翻倍。与既有 movement_id / character_id 命名一致。",
+      "examples": ["大漠残兵色板(10色)", "沈昭·泪痣锚点", "茶馆·南北轴线", "雨巷·残灯对峙"]
+    }
+  },
+  "close_up": {
+    "count": 2462,
+    "template": {
+      "skeleton": "Close-up of [SUBJECT], [FACIAL EXPRESSION / DETAIL], [LIGHTING], shallow depth of field, [STYLE].",
+      "example": "A close-up of [CHARACTER]'s face as [EMOTION] builds, [LIGHTING] catching [DETAIL: dust / teardrop], cinematic, [CAMERA MOVEMENT]."
+    },
+    "representative": [
+      {
+        "id": "SD2_00001",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "15-second cinematic Japanese drama pure love ambiguous short film, hyper-realistic quality, warm golden sunlight streaming through blinds in an empty afternoon classroom, casting light on side-by-side desks, fine dust particles slowly floating in the beams, old wooden desks, extreme natural micro-movements, breathing, and eye contact, consistent full-body clothing, hairstyle, and face throughout w"
+      },
+      {
+        "id": "SD2_00005",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "16:9 horizontal screen, street rap MV style, neon purple-blue cool tones, explosive and edgy atmosphere. 0-3 seconds: Medium shot moving forward, urban street night scene with neon flickering, an 80-year-old silver-haired grandmother stands before a graffiti wall, her short silver-white hair slicked back sharply, square face with distinct contours, slanted brows rising into her temples, eyes sharp"
+      },
+      {
+        "id": "SD2_00002",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "A 15-second Hollywood haute couture fantasy film in 8K photorealistic quality, with a high-fashion editorial style and Unreal Engine 5 fluid rendering, featuring visual illusions. The scene is set on an endless salt flat mirror reflecting the sky, with oppressive dark clouds above and a minimalist cool-toned palette. [00:00-00:05] Shot 1: Haute couture entrance and porcelain skin. Camera position:"
+      },
+      {
+        "id": "SD2_00003",
+        "featured": true,
+        "category": "Content Creation",
+        "prompt": "[Style]\nModern Rural Aesthetics, cinematic commercial quality, shot on Sony A7S3/cinema camera, 4K/8K ultra-high definition, extreme macro, natural and transparent light, healing ASMR, no period drama feel.\n\n[Scene]\nA well-organized modern farmhouse open kitchen, with a lush vegetable garden in the background, bathed in bright sunlight.\n\n[Character]\nModern rural creator, with long black hair casua"
+      },
+      {
+        "id": "SD2_00006",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "cinematic street racing sequence at night, a focused driver inside a high-performance car grips the steering wheel, intense eye focus, city lights reflecting on windshield, tension building before sudden acceleration\n\ncamera: rapid multi-angle system with seamless transitions, interior close-up → over-the-shoulder → exterior tracking → low ground shots, ultra dynamic camera movement, whip pans + s"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_04684",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: [Video prompt] Generate a 16:9 horizontal cinematic shot, about 11-12 seconds long. Real handheld phone shooting style, resembling a street interview spoofed video caught at night at a hotel or office entrance. The photographer is filmed from a first-person perspective, not on camera, only the male voice outside the frame. The camera is always aimed at the girl, with close-up half-body compositi"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      }
+    ]
+  },
+  "medium_shot": {
+    "count": 858,
+    "template": {
+      "skeleton": "Medium shot of [SUBJECT(S)] [ACTION] in [SCENE], [LIGHTING], [STYLE].",
+      "example": "Medium shot moving forward: [CHARACTER] stands before [SCENE], [WARDROBE / EXPRESSION], [MOOD], cinematic."
+    },
+    "representative": [
+      {
+        "id": "SD2_00001",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "15-second cinematic Japanese drama pure love ambiguous short film, hyper-realistic quality, warm golden sunlight streaming through blinds in an empty afternoon classroom, casting light on side-by-side desks, fine dust particles slowly floating in the beams, old wooden desks, extreme natural micro-movements, breathing, and eye contact, consistent full-body clothing, hairstyle, and face throughout w"
+      },
+      {
+        "id": "SD2_00005",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "16:9 horizontal screen, street rap MV style, neon purple-blue cool tones, explosive and edgy atmosphere. 0-3 seconds: Medium shot moving forward, urban street night scene with neon flickering, an 80-year-old silver-haired grandmother stands before a graffiti wall, her short silver-white hair slicked back sharply, square face with distinct contours, slanted brows rising into her temples, eyes sharp"
+      },
+      {
+        "id": "SD2_00003",
+        "featured": true,
+        "category": "Content Creation",
+        "prompt": "[Style]\nModern Rural Aesthetics, cinematic commercial quality, shot on Sony A7S3/cinema camera, 4K/8K ultra-high definition, extreme macro, natural and transparent light, healing ASMR, no period drama feel.\n\n[Scene]\nA well-organized modern farmhouse open kitchen, with a lush vegetable garden in the background, bathed in bright sunlight.\n\n[Character]\nModern rural creator, with long black hair casua"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_10990",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Act 1: [Reference Locking] Reference Figure 1 hf_20260730_044943_833909d3-0181-4d86-b4ad-8fdd91945fbd For Boss Lady #1 Wearing hf_20260730_045132_8f945ce1-0e33-4e9c-86c6-5b5bdb0b0185 Leg-to-foot proportions, thin sock texture, sofa sitting, and black high heel placement are the highest priorities; Maintain #1's preset face, hairstyle, makeup, and clothing. Reference video shows the small restauran"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_01695",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Sword Duel on the Lake - Two-Part Structure (15 seconds each part)\n\nPart 1: Initial Battle on the Lake (0-15 seconds)\n\nFilm Type and Form\nType: Wuxia Epic × Lightness Duel × Eastern Aesthetics\nStyle: Blue-green tones; Jiangnan ink-wash artistic conception\nPhotography: Combination of stable shots and handheld; slow motion to emphasize key actions\nAudio: Guqin music; bamboo flute; water sounds; swor"
+      },
+      {
+        "id": "SD2_08009",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "\"Sword Duel on the Lake\" - Two-part structure (each segment 15 seconds)\n\nSection One: First Battle on the Lake (0-15 seconds)\nFilm genres and formats\nGenre: Martial Arts Epic × Lightness Duel × Eastern Aesthetics\n Style: Blue-green tones; Jiangnan ink painting atmosphere\n Photography methods: Combination of stable shots and handheld shots; Slow motion emphasizes key actions\n Audio: Guqin sound; Ba"
+      }
+    ]
+  },
+  "full_shot": {
+    "count": 230,
+    "template": {
+      "skeleton": "Full shot of [CHARACTER] [ACTION] in [SCENE], consistent [CLOTHING / FACE], [LIGHTING], [STYLE].",
+      "example": "Full shot, single continuous take: [CHARACTER] stands atop [OBJECT], [COSTUME], [MOOD], realistic, no cuts."
+    },
+    "representative": [
+      {
+        "id": "SD2_00001",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "15-second cinematic Japanese drama pure love ambiguous short film, hyper-realistic quality, warm golden sunlight streaming through blinds in an empty afternoon classroom, casting light on side-by-side desks, fine dust particles slowly floating in the beams, old wooden desks, extreme natural micro-movements, breathing, and eye contact, consistent full-body clothing, hairstyle, and face throughout w"
+      },
+      {
+        "id": "SD2_00005",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "16:9 horizontal screen, street rap MV style, neon purple-blue cool tones, explosive and edgy atmosphere. 0-3 seconds: Medium shot moving forward, urban street night scene with neon flickering, an 80-year-old silver-haired grandmother stands before a graffiti wall, her short silver-white hair slicked back sharply, square face with distinct contours, slanted brows rising into her temples, eyes sharp"
+      },
+      {
+        "id": "SD2_00003",
+        "featured": true,
+        "category": "Content Creation",
+        "prompt": "[Style]\nModern Rural Aesthetics, cinematic commercial quality, shot on Sony A7S3/cinema camera, 4K/8K ultra-high definition, extreme macro, natural and transparent light, healing ASMR, no period drama feel.\n\n[Scene]\nA well-organized modern farmhouse open kitchen, with a lush vegetable garden in the background, bathed in bright sunlight.\n\n[Character]\nModern rural creator, with long black hair casua"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_00714",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1 (0-15 seconds): Rooftop Awakening · Running Leap (Front to Back) Style: Rough, raw realism, using 35mm handheld film footage with natural film grain and subtle shaking. Harsh Chongqing noon direct sunlight creates high-contrast strong shadows and halos. Shot: A single continuous third-person handheld tracking shot (no cuts), starting from a low front angle and smoothly transitioning to a"
+      },
+      {
+        "id": "SD2_01095",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: Industrial Ruins Chase, 15 seconds, one continuous shot. Subject: Standing atop the lead armored vehicle is @Figure 2 Cyberpunk Heroine Image 1 — white formal suit, mechanical prosthetic arm, metal neck guard, ponytail hairstyle, gold earrings, holding a red flag-spear high with one hand pointing toward the deep canyon ahead, with cinematic realistic facial details and a stable, undistorted"
+      },
+      {
+        "id": "SD2_10578",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "15 seconds, with a live-action cinematic feel, a dark cinematic theme of the underworld power organization, with a single take throughout, no editing, no skip cuts, no transitions, no hidden obstructions. No dialogue, no background music, no ambient sound, no sound effects.\n\nThe setting is set in a minimalist, solemn, and solemn Underworld trial space. The overall space is tall, spacious, and rest"
+      },
+      {
+        "id": "SD2_00989",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: Disaster film realism style, one continuous shot. The shot begins above the floating capital city in a stormy sky, diving down to the shattered roof of a flooded museum, where a lone cyberpunk heroine stands (Image 1). She spots a rescue flare in the distance and starts running. The camera follows closely, capturing her crossing collapsed roofs, leaping over broken skylights, sliding down a"
+      }
+    ]
+  },
+  "extreme_close_up": {
+    "count": 784,
+    "template": {
+      "skeleton": "Extreme close-up of [DETAIL / OBJECT], [TEXTURE / MICRO DETAIL], [LIGHTING], ultra-sharp macro, [STYLE].",
+      "example": "Extreme close-up of [OBJECT]'s surface, [micro detail], [LIGHTING] grazing across, 8K photorealistic, no motion blur."
+    },
+    "representative": [
+      {
+        "id": "SD2_00002",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "A 15-second Hollywood haute couture fantasy film in 8K photorealistic quality, with a high-fashion editorial style and Unreal Engine 5 fluid rendering, featuring visual illusions. The scene is set on an endless salt flat mirror reflecting the sky, with oppressive dark clouds above and a minimalist cool-toned palette. [00:00-00:05] Shot 1: Haute couture entrance and porcelain skin. Camera position:"
+      },
+      {
+        "id": "SD2_00003",
+        "featured": true,
+        "category": "Content Creation",
+        "prompt": "[Style]\nModern Rural Aesthetics, cinematic commercial quality, shot on Sony A7S3/cinema camera, 4K/8K ultra-high definition, extreme macro, natural and transparent light, healing ASMR, no period drama feel.\n\n[Scene]\nA well-organized modern farmhouse open kitchen, with a lush vegetable garden in the background, bathed in bright sunlight.\n\n[Character]\nModern rural creator, with long black hair casua"
+      },
+      {
+        "id": "SD2_00006",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "cinematic street racing sequence at night, a focused driver inside a high-performance car grips the steering wheel, intense eye focus, city lights reflecting on windshield, tension building before sudden acceleration\n\ncamera: rapid multi-angle system with seamless transitions, interior close-up → over-the-shoulder → exterior tracking → low ground shots, ultra dynamic camera movement, whip pans + s"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_10798",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Poetic Martial Arts × Cold-faced Twist Comedy | Bai He recognizes rice but not qin\n[Style]\nCinematic-level realistic texture, realistic realism.\nIt blends the restrained aesthetics of poetic martial arts, cold, observational comedy, elegant classical Chinese composition, soft evening backlighting, low-saturation jade green and ivory white tones, delicate film grain, and controllable group coordina"
+      },
+      {
+        "id": "SD2_01095",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: Industrial Ruins Chase, 15 seconds, one continuous shot. Subject: Standing atop the lead armored vehicle is @Figure 2 Cyberpunk Heroine Image 1 — white formal suit, mechanical prosthetic arm, metal neck guard, ponytail hairstyle, gold earrings, holding a red flag-spear high with one hand pointing toward the deep canyon ahead, with cinematic realistic facial details and a stable, undistorted"
+      },
+      {
+        "id": "SD2_08086",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act One: Industrial Ruins Chase, 15 seconds, one shot to the end. Main body: The lead armored chariot stands tall on the roof of the @Image2 Cyberpunk Heroine\nImage 1\n— White formal suit, mechanical prosthetics, metal neck armor, ponytail, gold earrings, one hand raises a red flag gun pointing deep into the canyon ahead. Her facial features are cinematically realistic, and her facial expressions r"
+      }
+    ]
+  },
+  "overhead": {
+    "count": 616,
+    "template": {
+      "skeleton": "Overhead top-down shot of [SUBJECT / SCENE], [LAYOUT], [LIGHTING], [STYLE].",
+      "example": "Overhead flat-lay of [OBJECT / ARRANGEMENT], [DETAIL], soft [LIGHTING], product / ASMR style."
+    },
+    "representative": [
+      {
+        "id": "SD2_00002",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "A 15-second Hollywood haute couture fantasy film in 8K photorealistic quality, with a high-fashion editorial style and Unreal Engine 5 fluid rendering, featuring visual illusions. The scene is set on an endless salt flat mirror reflecting the sky, with oppressive dark clouds above and a minimalist cool-toned palette. [00:00-00:05] Shot 1: Haute couture entrance and porcelain skin. Camera position:"
+      },
+      {
+        "id": "SD2_04684",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: [Video prompt] Generate a 16:9 horizontal cinematic shot, about 11-12 seconds long. Real handheld phone shooting style, resembling a street interview spoofed video caught at night at a hotel or office entrance. The photographer is filmed from a first-person perspective, not on camera, only the male voice outside the frame. The camera is always aimed at the girl, with close-up half-body compositi"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_10798",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Poetic Martial Arts × Cold-faced Twist Comedy | Bai He recognizes rice but not qin\n[Style]\nCinematic-level realistic texture, realistic realism.\nIt blends the restrained aesthetics of poetic martial arts, cold, observational comedy, elegant classical Chinese composition, soft evening backlighting, low-saturation jade green and ivory white tones, delicate film grain, and controllable group coordina"
+      },
+      {
+        "id": "SD2_01095",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: Industrial Ruins Chase, 15 seconds, one continuous shot. Subject: Standing atop the lead armored vehicle is @Figure 2 Cyberpunk Heroine Image 1 — white formal suit, mechanical prosthetic arm, metal neck guard, ponytail hairstyle, gold earrings, holding a red flag-spear high with one hand pointing toward the deep canyon ahead, with cinematic realistic facial details and a stable, undistorted"
+      },
+      {
+        "id": "SD2_08086",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act One: Industrial Ruins Chase, 15 seconds, one shot to the end. Main body: The lead armored chariot stands tall on the roof of the @Image2 Cyberpunk Heroine\nImage 1\n— White formal suit, mechanical prosthetics, metal neck armor, ponytail, gold earrings, one hand raises a red flag gun pointing deep into the canyon ahead. Her facial features are cinematically realistic, and her facial expressions r"
+      },
+      {
+        "id": "SD2_10136",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "[Role of Reference Images]\n\nRefer to the character in the source reference image and maintain the same character throughout the entire story. Reference images are used only for reference of face, contours, age, eye shape, iris color and patterns, eyelashes, eyebrows, nose, mouth, hairstyle, hair color, bangs, hair accessories, costumes, decorations, physique, overall silhouette, weapons, unique co"
+      },
+      {
+        "id": "SD2_10174",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "[Reference Images and Character Fix]\n\nRefer to the character in the source reference image and maintain the same character in every cut. Reference images are used only for face, eye shape, iris color, chin, age, hairstyle, hair color, hair texture, costume, decoration, physique, overall silhouette, atmosphere, character color, and 3D rendering representation. The background, room, furniture, pose,"
+      }
+    ]
+  },
+  "low_angle": {
+    "count": 1017,
+    "template": {
+      "skeleton": "Low-angle shot of [SUBJECT] looking up, [POWER / SCALE], [LIGHTING FROM BELOW], [STYLE].",
+      "example": "Low-angle from ground level, [CHARACTER] towers against [SKY / BACKDROP], [MOOD], dramatic, [CAMERA MOVEMENT]."
+    },
+    "representative": [
+      {
+        "id": "SD2_00005",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "16:9 horizontal screen, street rap MV style, neon purple-blue cool tones, explosive and edgy atmosphere. 0-3 seconds: Medium shot moving forward, urban street night scene with neon flickering, an 80-year-old silver-haired grandmother stands before a graffiti wall, her short silver-white hair slicked back sharply, square face with distinct contours, slanted brows rising into her temples, eyes sharp"
+      },
+      {
+        "id": "SD2_00002",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "A 15-second Hollywood haute couture fantasy film in 8K photorealistic quality, with a high-fashion editorial style and Unreal Engine 5 fluid rendering, featuring visual illusions. The scene is set on an endless salt flat mirror reflecting the sky, with oppressive dark clouds above and a minimalist cool-toned palette. [00:00-00:05] Shot 1: Haute couture entrance and porcelain skin. Camera position:"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_04684",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: [Video prompt] Generate a 16:9 horizontal cinematic shot, about 11-12 seconds long. Real handheld phone shooting style, resembling a street interview spoofed video caught at night at a hotel or office entrance. The photographer is filmed from a first-person perspective, not on camera, only the male voice outside the frame. The camera is always aimed at the girl, with close-up half-body compositi"
+      },
+      {
+        "id": "SD2_10990",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Act 1: [Reference Locking] Reference Figure 1 hf_20260730_044943_833909d3-0181-4d86-b4ad-8fdd91945fbd For Boss Lady #1 Wearing hf_20260730_045132_8f945ce1-0e33-4e9c-86c6-5b5bdb0b0185 Leg-to-foot proportions, thin sock texture, sofa sitting, and black high heel placement are the highest priorities; Maintain #1's preset face, hairstyle, makeup, and clothing. Reference video shows the small restauran"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_01695",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Sword Duel on the Lake - Two-Part Structure (15 seconds each part)\n\nPart 1: Initial Battle on the Lake (0-15 seconds)\n\nFilm Type and Form\nType: Wuxia Epic × Lightness Duel × Eastern Aesthetics\nStyle: Blue-green tones; Jiangnan ink-wash artistic conception\nPhotography: Combination of stable shots and handheld; slow motion to emphasize key actions\nAudio: Guqin music; bamboo flute; water sounds; swor"
+      },
+      {
+        "id": "SD2_08052",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1 (0-15 seconds): Rooftop Awakening · Running Down (Frontal to Rear) Style: Rough, raw realism, using a 35mm handheld film lens with natural film graininess and subtle shake. The glaring Chongqing noon sunlight creates high-contrast, intense shadows and halos. Shot: Single, continuous third-person handheld shadow shots (unedited), starting from a low front angle and gradually smoothly tran"
+      }
+    ]
+  },
+  "high_angle": {
+    "count": 76,
+    "template": {
+      "skeleton": "High-angle overhead shot of [SUBJECT / SCENE] below, [CONTEXT / SCALE], [LIGHTING], [STYLE].",
+      "example": "High-angle overlooking [BATTLEFIELD / CROWD], camera descends into [DETAIL], [MOOD], cinematic."
+    },
+    "representative": [
+      {
+        "id": "SD2_00002",
+        "featured": true,
+        "category": "Entertainment",
+        "prompt": "A 15-second Hollywood haute couture fantasy film in 8K photorealistic quality, with a high-fashion editorial style and Unreal Engine 5 fluid rendering, featuring visual illusions. The scene is set on an endless salt flat mirror reflecting the sky, with oppressive dark clouds above and a minimalist cool-toned palette. [00:00-00:05] Shot 1: Haute couture entrance and porcelain skin. Camera position:"
+      },
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_04684",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: [Video prompt] Generate a 16:9 horizontal cinematic shot, about 11-12 seconds long. Real handheld phone shooting style, resembling a street interview spoofed video caught at night at a hotel or office entrance. The photographer is filmed from a first-person perspective, not on camera, only the male voice outside the frame. The camera is always aimed at the girl, with close-up half-body compositi"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_01695",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Sword Duel on the Lake - Two-Part Structure (15 seconds each part)\n\nPart 1: Initial Battle on the Lake (0-15 seconds)\n\nFilm Type and Form\nType: Wuxia Epic × Lightness Duel × Eastern Aesthetics\nStyle: Blue-green tones; Jiangnan ink-wash artistic conception\nPhotography: Combination of stable shots and handheld; slow motion to emphasize key actions\nAudio: Guqin music; bamboo flute; water sounds; swor"
+      },
+      {
+        "id": "SD2_07980",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Mecha Warrior: Waterfall Wonderland Solo Performance - 1980s Martial Arts Film Stills VHS Videotape - Film Grain - Mossy Waterfall Scene Character Locked: Image 1: Mecha Warrior Image 2 - Short hair, dark gray alloy mechanical arms, pink glossy battle pants, white sneakers, samurai sword, bare-chested with clearly defined abs. Overlaid with a turquoise wide-sleeved robe, jade belt, hair in a hairp"
+      },
+      {
+        "id": "SD2_01008",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: A war disaster cinematic feel, one continuous shot. Under the gray-blue dawn sky, overlooking the entire burning battlefield and the advancing formations in the distance, the camera rapidly descends into a trench. A cyberpunk female warrior (Image 1) bursts out of an underground bunker torn open by artillery fire and runs toward the camera. She passes the camera, which then follows closely "
+      },
+      {
+        "id": "SD2_02976",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "1. CREATION BRIEF\n\nGenerate an original 15-second dark-fantasy cinematic sequence in 16:9 horizontal aspect ratio at 720p resolution. The video is a single sustained spectacle of a colossal pale bone-white frost dragon attacking a frozen mountain stronghold carved into a glacier cliff. The dragon is the unambiguous protagonist of every frame: it bursts up through a frozen lake in an explosion of sha"
+      }
+    ]
+  },
+  "pov": {
+    "count": 779,
+    "template": {
+      "skeleton": "POV / first-person shot: [VIEWER ACTION], camera as [CHARACTER]'s eyes, [SCENE AHEAD], [STYLE].",
+      "example": "POV handheld: we hold [OBJECT] and film, [SUBJECT] in frame, real phone-shooting texture, [MOOD]."
+    },
+    "representative": [
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_04684",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: [Video prompt] Generate a 16:9 horizontal cinematic shot, about 11-12 seconds long. Real handheld phone shooting style, resembling a street interview spoofed video caught at night at a hotel or office entrance. The photographer is filmed from a first-person perspective, not on camera, only the male voice outside the frame. The camera is always aimed at the girl, with close-up half-body compositi"
+      },
+      {
+        "id": "SD2_08052",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1 (0-15 seconds): Rooftop Awakening · Running Down (Frontal to Rear) Style: Rough, raw realism, using a 35mm handheld film lens with natural film graininess and subtle shake. The glaring Chongqing noon sunlight creates high-contrast, intense shadows and halos. Shot: Single, continuous third-person handheld shadow shots (unedited), starting from a low front angle and gradually smoothly tran"
+      },
+      {
+        "id": "SD2_00714",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1 (0-15 seconds): Rooftop Awakening · Running Leap (Front to Back) Style: Rough, raw realism, using 35mm handheld film footage with natural film grain and subtle shaking. Harsh Chongqing noon direct sunlight creates high-contrast strong shadows and halos. Shot: A single continuous third-person handheld tracking shot (no cuts), starting from a low front angle and smoothly transitioning to a"
+      },
+      {
+        "id": "SD2_10569",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "The body is made of scrap copper, steel pipes, exposed engines, belts, cables, front headlights, and massive wood-metal composite wheels. The footage was shot by a low-altitude FPV drone, flying close to the sand, level with the axles of the tank and the giant single-wheeled wheel, speeding along the collision axis of the two. Sand grains, broken grass, shadows of wooden wheels, giant wheel rims, "
+      },
+      {
+        "id": "SD2_10858",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Real-life footage + 2D cartoon sticker composite funny short video [Style] Real-life footage + Flat 2D Sticker Composite funny short video. First-person cooking perspective, the realistic kitchen texture and flat cartoon sticker style form a strong contrast. The overall effect is a mix of Live-Action + Flat 2D Cartoon Sticker. The scene is a real kitchen shot, and the characters are Q version cart"
+      },
+      {
+        "id": "SD2_10692",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "High-quality animated footage. High-density 3D toon/cel look. Key animation on the level of a theatrical film, high-quality composites, transparent midsummer lighting, vivid colors, and dense beach background art. A seaside fantasy slapstick parkour action set in cinematic anime action. Comical but seriously high-speed chase. Total length: 15 seconds, no background music.\n\n[Role of Reference]\nImag"
+      },
+      {
+        "id": "SD2_10412",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Use image_1 as the visual storyboard anchor for shot order, camera grammar, staging, prop/effect state, screen direction, and spatial continuity. Render the final filmed scene, not the sheet; do not add events outside this prompt. Read each panel as a separate full-frame shot sample. Preserve the same C#/object identities, avoid split-screen or quadrant frames, and do not show any creature reflect"
+      }
+    ]
+  },
+  "wide_shot": {
+    "count": 979,
+    "template": {
+      "skeleton": "Wide shot of [SCENE / LANDSCAPE], [SCALE / ATMOSPHERE], [LIGHTING], [STYLE].",
+      "example": "Wide shot of [LOCATION] at [TIME], [MOOD], vast empty space, slow [CAMERA MOVEMENT], photorealistic."
+    },
+    "representative": [
+      {
+        "id": "SD2_00363",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Chapter 1: First Paragraph | Sudden Fall from the Sky and Headwind Sprint (Prologue: 0-15 seconds) [Camera Movement and Scene Setting] A 15-second catastrophic opening filled with suffocation and grand scale contrast. Emphasizes the physical foreshadowing of 'feeling the pressure before seeing the object.' The color palette is extremely low-saturation cold gray, with overcast diffused light, and t"
+      },
+      {
+        "id": "SD2_11117",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Japanese full-color animated film, cinematic high-quality visuals. No background music, no dialogue, no subtitles, no text, but ambient sounds are present. Shallow depth of field and bokeh effect, as if shot with a 24mm F1.4 wide-angle lens (full-frame equivalent). The foreground bokeh is large and soft, and the background blends naturally. # Constraints Change the angle, field of view, and focal "
+      },
+      {
+        "id": "SD2_01695",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Sword Duel on the Lake - Two-Part Structure (15 seconds each part)\n\nPart 1: Initial Battle on the Lake (0-15 seconds)\n\nFilm Type and Form\nType: Wuxia Epic × Lightness Duel × Eastern Aesthetics\nStyle: Blue-green tones; Jiangnan ink-wash artistic conception\nPhotography: Combination of stable shots and handheld; slow motion to emphasize key actions\nAudio: Guqin music; bamboo flute; water sounds; swor"
+      },
+      {
+        "id": "SD2_08009",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "\"Sword Duel on the Lake\" - Two-part structure (each segment 15 seconds)\n\nSection One: First Battle on the Lake (0-15 seconds)\nFilm genres and formats\nGenre: Martial Arts Epic × Lightness Duel × Eastern Aesthetics\n Style: Blue-green tones; Jiangnan ink painting atmosphere\n Photography methods: Combination of stable shots and handheld shots; Slow motion emphasizes key actions\n Audio: Guqin sound; Ba"
+      },
+      {
+        "id": "SD2_10798",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Poetic Martial Arts × Cold-faced Twist Comedy | Bai He recognizes rice but not qin\n[Style]\nCinematic-level realistic texture, realistic realism.\nIt blends the restrained aesthetics of poetic martial arts, cold, observational comedy, elegant classical Chinese composition, soft evening backlighting, low-saturation jade green and ivory white tones, delicate film grain, and controllable group coordina"
+      },
+      {
+        "id": "SD2_01095",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Act 1: Industrial Ruins Chase, 15 seconds, one continuous shot. Subject: Standing atop the lead armored vehicle is @Figure 2 Cyberpunk Heroine Image 1 — white formal suit, mechanical prosthetic arm, metal neck guard, ponytail hairstyle, gold earrings, holding a red flag-spear high with one hand pointing toward the deep canyon ahead, with cinematic realistic facial details and a stable, undistorted"
+      },
+      {
+        "id": "SD2_10457",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Duration: 15 seconds\n\nFormat: 16:9 horizontal format\n\nStructure: Fixed position continuous long take, no cutting throughout\n\nOverall style: Photo-realistic characters combined with lighthearted and cute AR magic effects—sweet, playful, and absurd, similar to creative confession short videos. All abnormal changes must be presented as obvious digital stickers, masks, and elastic layer animations, with"
+      },
+      {
+        "id": "SD2_10796",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "[Basic Settings]\nGenerate a contrasting funny short video about 10 seconds long in 16:9 horizontal mode.\nReal residential community environments, combined with chibi-style flat 2D anime sticker characters.\nThe fisheye camera position is fixed throughout, with a single shot throughout, no editing, no transitions, no black scenes, no push-pull panning, no rotation, no zoom.\nNo background music, subtit"
+      }
+    ]
+  },
+  "aerial": {
+    "count": 746,
+    "template": {
+      "skeleton": "Aerial drone shot above [SCENE], [SCALE / MOVEMENT], [TIME / LIGHTING], [STYLE].",
+      "example": "Aerial fly-through of [CITY / LANDSCAPE], [CAMERA MOVEMENT], [ATMOSPHERE], photorealistic, seamless."
+    },
+    "representative": [
+      {
+        "id": "SD2_05260",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Style: photorealistic cinematic, blockbuster sci-fi realism — documentary-grade naturalism, fine 35mm grain, real anamorphic rendering, oval bokeh, restrained filmic contrast, heavy true photographic motion blur on fast elements. Grounded, authentic skin and fabric over glossy CG sheen; natural imperfection and asymmetry throughout.\nLighting: deep-space darkness as base; the nebula itself is the k"
+      },
+      {
+        "id": "SD2_10136",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "[Role of Reference Images]\n\nRefer to the character in the source reference image and maintain the same character throughout the entire story. Reference images are used only for reference of face, contours, age, eye shape, iris color and patterns, eyelashes, eyebrows, nose, mouth, hairstyle, hair color, bangs, hair accessories, costumes, decorations, physique, overall silhouette, weapons, unique co"
+      },
+      {
+        "id": "SD2_10764",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "High-quality animated footage. High-density 3D toon/cel look. Key animation on theatrical level, high-quality composites, transparent lighting, and dense background art. Set in a magnificent magical city soaked in rain. Depicted as a cinematic high fantasy action RPG. The character in the reference image fires continuous beams from the main gate deployed in front of him and multiple converging gat"
+      },
+      {
+        "id": "SD2_07980",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Mecha Warrior: Waterfall Wonderland Solo Performance - 1980s Martial Arts Film Stills VHS Videotape - Film Grain - Mossy Waterfall Scene Character Locked: Image 1: Mecha Warrior Image 2 - Short hair, dark gray alloy mechanical arms, pink glossy battle pants, white sneakers, samurai sword, bare-chested with clearly defined abs. Overlaid with a turquoise wide-sleeved robe, jade belt, hair in a hairp"
+      },
+      {
+        "id": "SD2_10655",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "[Worldview]\nSet in a nighttime sky magic city, this is a cinematic high-speed aerial interception action. Set in a floating city covered by an airway network, a single character in the reference image wields a large air patrol rescue axe and a single ether wire to annihilate five small black demon dragons attacking through the air with three-dimensional maneuvers. High-density 3D toon/cell look. S"
+      },
+      {
+        "id": "SD2_10836",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "High-quality animated footage. A heroic high fantasy ocean hunting action. Draw using only high-density 3D toons/cel looks. Maintains a fine, delicate cool-toned contour, transparent multi-layered cel shadows, strong summer sunlight, reflections from the sea surface, splashes from backlight, and high-quality composites. Reflect the character's unique colors in key lights, reflected light, shadow c"
+      },
+      {
+        "id": "SD2_03360",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "POV viewer holds a mobile phone and films, the frame slightly shaky, with the phone held high above the crowd. In the foreground, you could see the black-haired silhouette of a dense crowd, many holding up their phones and small cameras to record performances, with the screen flashing in and out. The entire scene has a strong sense of live presence, spectators, and the texture of a viral short vid"
+      },
+      {
+        "id": "SD2_10487",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "Create a **15-second cinematic miniature-diorama formation video** in a **1:1 square format**. Use **@reference_image** as the exact visual reference for the completed harbour island. The final island layout, coastline, harbour structure, architecture, lighthouse, roof colours, bridges, canals, piers, terrain, and overall appearance should closely match the reference image. The video shows an enor"
+      }
+    ]
+  },
+  "insert": {
+    "count": 64,
+    "template": {
+      "skeleton": "Insert shot — ultra close-up of [DETAIL / PROP], [TRANSITION TO], [LIGHTING], [STYLE].",
+      "example": "Insert shot: extreme close-up on [PROP e.g. sunglasses], curved lens reflecting [SCENE], seamless cut."
+    },
+    "representative": [
+      {
+        "id": "SD2_05224",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Style: 8K photorealistic, cinematic war-documentary realism.\nLighting: overcast daylight key from high left, 5600K, sun diffused behind cloud, hard rim on wet surfaces, light sea haze at 30%.\nColor: gunmetal-grey steel deck and hull, deep slate-green ocean, pale grey sky; accent of livid purple-red octopus flesh slick with seawater catching the cold daylight.\nCamera: physical cine wides and long-l"
+      },
+      {
+        "id": "SD2_03637",
+        "featured": false,
+        "category": "Commercial",
+        "prompt": "A hyper-cinematic ultra-premium advertisement film for Juni Sparkling Adaptogen Peach Tea. Directed like a Cannes award-winning commercial. Every frame shot on ARRI Alexa 65 cinema camera, Zeiss Master Prime lenses, 8K resolution, Kodak Vision 3 film grain, 2.39:1 anamorphic widescreen format, 120fps ultra slow motion throughout, professional color grading with warm peachy golden tones and soft te"
+      },
+      {
+        "id": "SD2_00139",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "Split screen: STYLE: High-end stylized 3D animated character, cinematic lighting, expressive faces, polished materials, exaggerated but believable motion, comedic visual storytelling with split-screen sequences. WARDROBE: Man Image2 — oversized graphic tee and jogger pants entire film, never changes. Woman Image1 — western casuals shots 1–6, sharp blazer trousers and heels shots 7–13, nighty shots"
+      },
+      {
+        "id": "SD2_10389",
+        "featured": false,
+        "category": "Content Creation",
+        "prompt": "CAMERA / LOOK: Handheld mini DV camcorder footage filmed by the subject herself. Slight hand shake, occasional focus hunting, imperfect framing, natural zoom adjustments, soft tape-like image quality, subtle grain, realistic auto-exposure shifts from bedroom lighting. Natural skin tones, mild motion blur, authentic consumer camcorder aesthetic rather than polished cinematic footage.\n\nSTYLE: Cozy p"
+      },
+      {
+        "id": "SD2_03128",
+        "featured": false,
+        "category": "Commercial",
+        "prompt": "Style: Pixar-quality CGI animation, DreamWorks-level character acting, ultra-detailed food textures, cinematic advertising, volumetric lighting, golden-hour atmosphere, premium commercial quality, dynamic camera movement, expressive animation, rich color grading, 16:9.\n\n⸻\n\nSCENE 1 (0-2s) — NOODLE CITY\n\nA breathtaking aerial fly-through of a magnificent fantasy city built entirely from noodles, veg"
+      },
+      {
+        "id": "SD2_04127",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "[00:00–00:01] Daylight. Low-angle medium shot with subtle fisheye distortion. A stylish woman stands beneath a faded European apartment wall, one shoulder resting casually against it. Soft flower petals float through the air as she taps her fingers lightly to the beat. Camera handheld with gentle push-in motion.\n\n[00:01–00:02] Insert shot — ultra close-up on reflective sunglasses. The curved lens "
+      },
+      {
+        "id": "SD2_00617",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "# ═══════════════════════════════════════════════\n# PROJECT: 2D Fighting Game Sequence\n# SPECS: Playstation 4 / 30FPS / Budget 500M JPY\n# ═══════════════════════════════════════════════\n\nvisual_config:\n  style: >\n    2D anime-style fighting video game screenshot,\n    cel-shaded, bold outlines, gold-purple-crimson palette,\n    manga-style dynamic lines, arcade game aesthetic\n\ncharacter_settings:\n  "
+      },
+      {
+        "id": "SD2_09036",
+        "featured": false,
+        "category": "Entertainment",
+        "prompt": "# ═══════════════════════════════════════════════\n# PROJECT: 2D Fighting Game Sequence\n# SPECS: Playstation 4 / 30FPS / Budget 500M JPY\n# ═══════════════════════════════════════════════\n\nvisual_config:\n  style: >\n    2D anime-style fighting video game screenshot,\n    cel-shaded, bold outlines, gold-purple-crimson palette,\n    manga-style dynamic lines, arcade game aesthetic\n\ncharacter_settings:\n  "
+      }
+    ]
+  }
+}

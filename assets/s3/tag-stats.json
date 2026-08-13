@@ -1,0 +1,44 @@
+{
+  "shot_type": {
+    "close_up": 2462,
+    "medium_shot": 858,
+    "full_shot": 230,
+    "extreme_close_up": 784,
+    "overhead": 616,
+    "low_angle": 1017,
+    "high_angle": 76,
+    "unknown": 4284,
+    "pov": 779,
+    "wide_shot": 979,
+    "aerial": 746,
+    "insert": 64
+  },
+  "camera_movement": {
+    "tracking": 2397,
+    "zoom": 1312,
+    "unknown": 4506,
+    "orbit": 1029,
+    "pan": 505,
+    "handheld": 1353,
+    "crane": 186,
+    "static": 306,
+    "hyperlapse": 61,
+    "tilt": 206
+  },
+  "lighting": {
+    "golden_hour": 962,
+    "night_neon": 2790,
+    "daylight_soft": 883,
+    "dramatic_hard": 589,
+    "unknown": 4435,
+    "studio": 268
+  },
+  "style": {
+    "cinematic": 4417,
+    "photorealistic": 3323,
+    "3d_render": 896,
+    "anime": 957,
+    "unknown": 3116,
+    "stop_motion": 76
+  }
+}

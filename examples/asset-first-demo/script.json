@@ -1,0 +1,13 @@
+{
+  "title": "纸嫁衣之夜",
+  "logline": "民国女侦探沈昭在茶馆偶遇离奇纸嫁衣命案，与助手顾言追查至雨巷，揭开一场借冥婚藏匿的连环阴谋。",
+  "characters": ["shen_zhao", "gu_yan"],
+  "scenes": ["scene_tea_house", "scene_rain_alley"],
+  "beats": [
+    {"t": "Hook", "scene": "scene_tea_house", "action": "雨夜茶馆，沈昭目睹新娘纸人眼珠转动，茶客离奇僵坐", "value": "悬念钩子"},
+    {"t": "Turn", "scene": "scene_tea_house", "action": "顾言发现纸嫁衣内藏活人指纹，沈昭推断凶手就在茶客中", "value": "冲突升级"},
+    {"t": "Confront", "scene": "scene_rain_alley", "action": "二人追凶至雨巷，凶手反身举刀，正反打对峙", "value": "正面冲突"},
+    {"t": "Resolve", "scene": "scene_rain_alley", "action": "沈昭以灯影惑敌，顾言制伏凶手，冥婚阴谋败露", "value": "价值收尾"},
+    {"t": "PowerShift", "scene": "scene_rain_alley", "action": "沈昭以灯影制敌，气场压全场，冥婚阴谋破", "value": "权力反转", "power_dynamic": "shift"}
+  ]
+}

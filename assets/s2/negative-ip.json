@@ -1,0 +1,29 @@
+{
+  "purpose": "IP firewall negative prompt library for S3 storyboard generation",
+  "license": "original / authored list, no copyrightable content, free for commercial use",
+  "note": "Auxiliary layer only. Must combine with NLP semantic decomposition + feature-vector similarity check in the product IP firewall.",
+  "blocked_properties": {
+    "animation_kids": ["Peppa Pig", "Paw Patrol", "Cocomelon", "Bluey", "Numberblocks", "Alphablocks", "Blippi"],
+    "disney": ["Disney Princess", "Mickey Mouse", "Frozen", "Toy Story", "Moana", "Encanto"],
+    "marvel_dc": ["Spider-Man", "Batman", "Superman", "Marvel", "DC"],
+    "sanrio": ["Hello Kitty", "My Melody", "Cinnamoroll", "Kuromi"],
+    "others": ["My Little Pony", "Powerpuff Girls", "SpongeBob", "Pokemon", "Harry Potter", "Minions", "Shrek"]
+  },
+  "descriptive_negatives": [
+    "official poster style",
+    "specific commercial artist signature style",
+    "copyrighted logo",
+    "watermark",
+    "text",
+    "signature"
+  ],
+  "generic_negatives": [
+    "low quality",
+    "deformed",
+    "extra limbs",
+    "bad anatomy",
+    "blurry"
+  ],
+  "integration": "Flatten blocked_properties values + generic_negatives, append as negative_prompt to each S3 storyboard shot prompt.",
+  "updated": "2026-08-12"
+}

@@ -1,0 +1,60 @@
+{
+  "characters": [
+    {
+      "id": "shen_zhao",
+      "name": "沈昭",
+      "role": "女侦探",
+      "visual_lock": {
+        "hair": "齐耳短发，右侧别一支银质栀子花发夹",
+        "face": "柳叶眉，丹凤眼，左眼角一颗泪痣",
+        "outfit": "墨蓝立领长衫，外罩米白羊毛围脖，腰间挂黄铜怀表",
+        "palette": "墨蓝 / 米白 / 黄铜金",
+        "props": "手持一盏可折叠的纸骨油灯"
+      },
+      "fixed_prompt": "A young Chinese female detective in 1920s Republican-era China, chin-length straight black hair with a silver gardenia hairpin on the right side, willow-leaf eyebrows, phoenix eyes with a single tear-mole under the left eye, wearing a dark navy stand-collar changshan robe with a cream wool scarf and a brass pocket watch at the waist, holding a folding paper-bone oil lamp, somber teahouse lighting.",
+      "three_view": {
+        "front": "正面全身：立领长衫垂至小腿，围脖自然搭落，怀表链斜跨腰间，双手交叠持灯于身前",
+        "side": "侧面轮廓：短发露出后颈，鼻梁挺直，发夹侧影清晰，长衫开衩随步伐微扬",
+        "back": "背面：长衫后背中缝笔直，围脖系结垂于脊线，发夹不可见于背面，鞋为黑布千层底"
+      },
+      "ref_pack": {
+        "frontal_closeup": "面部特写，泪痣与发夹为一致性锚点",
+        "profile": "右半侧 45°，突出鼻梁与发夹侧影",
+        "full_body": "正面全身立姿，长衫与怀表链为锚点"
+      },
+      "consistency_rules": [
+        "泪痣位置与发夹左右固定，任何视图不得镜像翻转",
+        "墨蓝长衫为主色，不得替换为红/绿等喜庆色",
+        "怀表链与纸骨油灯为专属道具，每镜必现其一"
+      ]
+    },
+    {
+      "id": "gu_yan",
+      "name": "顾言",
+      "role": "助手",
+      "visual_lock": {
+        "hair": "三七分短发，额前一缕碎发",
+        "face": "剑眉星目，下颌线分明，右脸一道旧疤",
+        "outfit": "深灰学生装，外翻衣领，袖口卷至小臂",
+        "palette": "深灰 / 月白 / 暗赭",
+        "props": "腰间别一把乌木折扇"
+      },
+      "fixed_prompt": "A young Chinese male assistant in 1920s Republican-era China, short side-parted black hair with a stray fringe, sharp sword-eyebrows and starry eyes, defined jawline with an old scar on the right cheek, wearing a dark grey student tunic with turned-out collar and rolled-up cuffs, a blackwood folding fan tucked at the waist, teahouse dusk light.",
+      "three_view": {
+        "front": "正面全身：学生装扣至第二颗，衣领外翻，折扇斜插腰间，双手插兜微弓背",
+        "side": "侧面：碎发垂额，疤痕随转头可见，衣领外翻轮廓分明",
+        "back": "背面：学生装后摆齐臀，折扇扇骨露于腰侧，发量三七分界清晰"
+      },
+      "ref_pack": {
+        "frontal_closeup": "面部特写，右脸旧疤为一致性锚点",
+        "profile": "左半侧 45°，疤痕与下颌线为锚点",
+        "full_body": "正面全身，外翻衣领与折扇为锚点"
+      },
+      "consistency_rules": [
+        "右脸旧疤为最高优先级锚点，任何视图不得抹除",
+        "深灰学生装为主色，不得改为军装样式",
+        "乌木折扇专属，每镜至少暗示其存在"
+      ]
+    }
+  ]
+}

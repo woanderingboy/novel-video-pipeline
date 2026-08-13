@@ -1,0 +1,8 @@
+{
+  "items": [
+    {"file": "bgm_teahouse_tension.mp3", "license": "CC0", "source": "internal synth, no third-party IP", "duration_ms": 30000},
+    {"file": "sfx_rain_loop.mp3", "license": "CC0", "source": "internal foley, no third-party IP", "duration_ms": 45000},
+    {"file": "sfx_knife_clash.mp3", "license": "CC0", "source": "internal foley, no third-party IP", "duration_ms": 1200},
+    {"file": "bgm_resolve_calm.mp3", "license": "CC0", "source": "internal synth, no third-party IP", "duration_ms": 28000}
+  ]
+}
