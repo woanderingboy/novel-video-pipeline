@@ -87,9 +87,8 @@ def resolve_token(tok, char_lib, scene_lib, visual_lib, assets_dir):
             return rp[key], "resolved"
         if key in tv:
             return tv[key], "resolved"
-        # key 未命中：列出可用键，便于排错
-        avail = list(rp.keys()) + list(tv.keys())
-        return tok, "unresolved" if not avail else "unresolved"
+        # key 未命中角色资产：保留原串待补（status=unresolved）
+        return tok, "unresolved"
 
     if tok.startswith("scene:"):
         parts = tok.split(":", 2)

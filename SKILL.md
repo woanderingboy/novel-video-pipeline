@@ -75,7 +75,9 @@ S1 改编剧本  ──script.json──▶  S2 资产库  ──character_manif
 5. **一致性终检**：核对 §四清单（角色/场景/轴线/权力轴/时长/IP 防火墙/音频/比例）后再发布。
 
 ### 第 6 步 · 门禁校验（必做）
-运行 `scripts/validate_pipeline.py --project <DIR> --platform bilibili [--strict]`，校验四站产物契约 + 五道质量闸门：S3 每条 shot 的 `negative_prompt` **必须覆盖 `assets/s2/negative-ip.json` 全部被屏蔽 IP 令牌**（守住真实第三方版权形象刚需，缺失在 strict 下即失败）；时长须落在 `platform-presets.json` 对应平台合法集、比例须匹配（横屏漫剧默认 16:9）；S4 音频时长 0.3–180s（保留真实极短音效）。`--strict` 下 warn 也判失败。通过后才可进入视频合成。儿童向产线追加 `--child`：强制 S1 含「价值收尾」类节拍、S3 覆盖儿童安全负向令牌（violence/gore/horror/blood/mature/nudity/weapon…）、扫描 beats 命中成熟内容（strict 下为失败）。
+运行 `scripts/validate_pipeline.py --project <DIR> --platform bilibili [--strict] [--content-rating {normal,child}]`，校验四站产物契约 + 五道质量闸门：S3 每条 shot 的 `negative_prompt` **必须覆盖 `assets/s2/negative-ip.json` 全部被屏蔽 IP 令牌**（守住真实第三方版权形象刚需，缺失在 strict 下即失败）；时长须落在 `platform-presets.json` 对应平台合法集、比例须匹配（横屏漫剧默认 16:9）；S4 音频时长 0.3–180s（保留真实极短音效）。`--strict` 下 warn 也判失败。通过后才可进入视频合成。
+
+**内容分级（重要 · 默认不限制题材）**：门禁默认 `--content-rating normal` —— **不做任何内容分级限制，打斗 / 暴力 / 悬疑 / 暗黑等成人向题材均可正常产出**，仅守版权 IP 防火墙与资产契约。儿童向产线才追加 `--content-rating child`（或旧别名 `--child`）：强制 S1 含「价值收尾」类节拍、S3 覆盖儿童安全负向令牌（violence/gore/horror/blood/mature/nudity/weapon…）、扫描 beats 命中成熟内容（strict 下为失败）。**即：`--child` 是纯可选的「儿童安全开关」，不传则漫剧内容完全自由，不会低龄化。**
 
 ## 拉取脚本（零 IP 风险）
 
@@ -112,7 +114,7 @@ python scripts/fetch_audio.py --out <DIR>
 - `assets/s2/`：负向词库 `negative-ip.json` + IP 防火墙说明 `negative-ip-firewall.md` + 角色资产方法论 `character-design.md` + 场景资产方法论 `scene-multiview.md`。
 - `assets/s3/`：分镜模板库 `template-library.json`、运镜库 `camera-movements.json`、平台预设 `platform-presets.json`、标签统计 `tag-stats.json`、质量负向词 `negative-quality.md`。
 - `assets/s4/`：已拉取 CC0 音频清单 `audio-manifest.json`。
-- `scripts/`：`fetch_visual_assets.py`（S2 拉图）、`fetch_audio.py`（S4 拉音）、`build_storyboard.py`（S1+S2 → S3 分镜脚手架自动生成，支持 `ref_images` 锚定自动抽取 / `power_dynamic` 自动选角 / `--target-duration` 镜头预算）、`resolve_ref_images.py`（S5 把 `ref_images` 令牌解析为真实图路径，产出 `storyboard.resolved.json`）、`build_ffmpeg_concat.py`（S5 由 storyboard.json 生成 FFmpeg 拼接列表 + 命令）、`validate_pipeline.py`（站间门禁，支持 `--child` 儿童向硬门禁）。
+- `scripts/`：`fetch_visual_assets.py`（S2 拉图）、`fetch_audio.py`（S4 拉音）、`build_storyboard.py`（S1+S2 → S3 分镜脚手架自动生成，支持 `ref_images` 锚定自动抽取 / `power_dynamic` 自动选角 / `--target-duration` 镜头预算）、`resolve_ref_images.py`（S5 把 `ref_images` 令牌解析为真实图路径，产出 `storyboard.resolved.json`）、`build_ffmpeg_concat.py`（S5 由 storyboard.json 生成 FFmpeg 拼接列表 + 命令）、`validate_pipeline.py`（站间门禁，默认 `--content-rating normal` 零内容限制；`--content-rating child` / `--child` 触发儿童向硬门禁）。
 - `references/`：`architecture-licenses.md`（开源方案借鉴与许可证边界）、`workflow.md`（四站详细契约与用法）、`case-studies.md`（爆款漫剧/短剧运镜·分镜语法借鉴，方法论文献，不照搬 IP）、`benchmark.md`（对比测评：NVP vs ViMax/seedance/ai-shortfilm/ArcReel 等评分矩阵 + 实证自测）、`s5-composite.md`（S5 合成 SOP：五步闭环 + 工具矩阵 + 一致性终检清单）。
 
 ## 注意事项

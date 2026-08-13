@@ -3,7 +3,7 @@
 """
 validate_pipeline.py — 四站式产物门禁校验
 =========================================
-校验一个项目目录下 S1–S4 四站产物的契约与质量闸门（S5 合成在门禁通过后执行），输出报告。支持 --child 儿童向硬门禁。
+校验一个项目目录下 S1–S4 四站产物的契约与质量闸门（S5 合成在门禁通过后执行），输出报告。默认内容分级 normal（无任何内容限制，打斗/暴力题材可正常产出）；可选 --content-rating child（儿童向硬门禁），--child 为等价别名。
 每站产物为约定 JSON：
   S1  script.json            : {title, logline, characters[], scenes[], beats[{t,scene,action,value}]}
   S2  character_manifest     : {characters[{id,name,visual_lock,fixed_prompt,three_view{front,side,back},ref_pack}]}
@@ -20,7 +20,8 @@ validate_pipeline.py — 四站式产物门禁校验
   - 跨站：S3 shots 数 >= S1 beats 数（每个节拍至少一镜）
 
 运行：
-  python validate_pipeline.py --project <DIR> [--strict]
+  python validate_pipeline.py --project <DIR> [--strict] [--content-rating {normal,child}]
+默认 normal（无内容限制，打斗/暴力题材可正常产出）；child 触发儿童向硬门禁（--child 等价）。
 """
 import argparse, json, os, sys
 
@@ -296,15 +297,21 @@ def main():
     ap.add_argument("--strict", action="store_true", help="遇 warn 也视为失败")
     ap.add_argument("--platform", default="bilibili",
                     help="目标平台预设（bilibili/douyin/xiaohongshu/square），默认 bilibili（横屏 16:9 漫剧）")
+    ap.add_argument("--content-rating", choices=["normal", "child"], default="normal",
+                    help="内容分级：normal（默认）—— 无任何内容限制，打斗/暴力/悬疑等题材可正常产出，"
+                         "仅守版权 IP 防火墙与资产契约；child —— 儿童向硬门禁（等价 --child）："
+                         "S1 须含价值收尾节拍 + S3 须覆盖儿童安全负向令牌 + 扫描成熟内容。")
     ap.add_argument("--child", action="store_true",
-                    help="儿童向硬门禁：S1 须含价值收尾节拍 + S3 须覆盖儿童安全负向令牌 + 扫描成熟内容")
+                    help="等价 --content-rating child（向后兼容的旧开关名）")
     a = ap.parse_args()
+    # 内容分级：默认 normal（零内容限制）；--child 或 --content-rating child 触发儿童向硬门禁
+    child = (a.child or a.content_rating == "child")
     p = os.path.abspath(a.project)
     rep = Report(a.strict)
     ip_tokens = get_ip_tokens()
     platform_presets = get_platform_presets()
-    print(f"== 校验项目：{p} ｜ 平台：{a.platform} ==")
-    n_beats = check_s1(load(os.path.join(p, "script.json")), rep, child=a.child)
+    print(f"== 校验项目：{p} ｜ 平台：{a.platform} ｜ 内容分级：{'child' if child else 'normal（无限制）'} ==")
+    n_beats = check_s1(load(os.path.join(p, "script.json")), rep, child=child)
     d_char = load(os.path.join(p, "character_manifest.json"))
     d_scene = load(os.path.join(p, "scene_manifest.json"))
     d_visual = load(os.path.join(p, "visual_manifest.json"))
@@ -314,7 +321,7 @@ def main():
     check_s3(load(os.path.join(p, "storyboard.json")), rep, n_beats,
              platform=a.platform, platform_presets=platform_presets,
              ip_tokens=ip_tokens, char_ids=char_ids or None, scene_ids=scene_ids or None,
-             child=a.child)
+             child=child)
     check_s4(load(os.path.join(p, "audio_manifest.json")), rep)
     print(f"\n== 结果：✅{rep.okays}  ⚠️{rep.warns}  ❌{rep.errors} ==")
     if rep.errors or (a.strict and rep.warns):
