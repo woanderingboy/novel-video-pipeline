@@ -43,6 +43,11 @@ SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_URL = os.environ.get("NVP_MEMORY_URL", "http://127.0.0.1:8080")
 DEFAULT_TOKEN = os.environ.get("NVP_API_TOKEN", "")
 
+# 本地免部署模式：直连 skill 内的 SQLite（无需起服务 / 不设 NVP_MEMORY_URL）
+# 与 db.DEFAULT_DB 一致：可用 NVP_DB_PATH 环境变量覆盖（便于测试 / 多项目隔离）
+LOCAL_DB = os.environ.get("NVP_DB_PATH") or os.path.join(SKILL_ROOT, "memory_server", "data", "nvp_memory.db")
+CACHE_PATH = os.path.join(SKILL_ROOT, ".cache", "learnings.json")
+
 
 def _load(p):
     if not os.path.exists(p):
@@ -120,6 +125,38 @@ def parse_failures_file(path, run_id):
     return out
 
 
+def local_ingest(events, db_path=LOCAL_DB):
+    """本地免部署模式：直接写本地 SQLite 并触发聚合，无需起服务。"""
+    import sys
+    import shutil
+    sys.path.insert(0, os.path.join(SKILL_ROOT, "memory_server"))
+    import db as memdb
+    import growth as memgrowth
+
+    conn = memdb.get_conn(db_path)
+    ok = fail = 0
+    reasons = []
+    try:
+        for ev in events:
+            good, reason = memdb.insert_event(conn, ev)
+            if good:
+                ok += 1
+            else:
+                fail += 1
+                reasons.append(reason)
+        conn.commit()
+    finally:
+        conn.close()
+    # 采集后立刻聚合，生成 snapshot/learnings.json
+    memgrowth.run_growth(db_path)
+    # 复制到 .cache，供 build_storyboard 立即读取（无需再跑 load_learnings）
+    snap = memdb.snapshot_path()
+    if os.path.exists(snap):
+        os.makedirs(os.path.dirname(CACHE_PATH), exist_ok=True)
+        shutil.copyfile(snap, CACHE_PATH)
+    return ok, fail, reasons
+
+
 def post_events(url, token, events, timeout=15):
     body = json.dumps({"events": events}, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
@@ -157,6 +194,8 @@ def main():
     ap.add_argument("--mirror", help="把 events 写入该镜像文件（不发送）")
     ap.add_argument("--sync", help="把镜像文件同步发送到服务器")
     ap.add_argument("--dry-run", action="store_true", help="只打印 events，不发送/不写镜像")
+    ap.add_argument("--local", action="store_true", help="强制本地直连 SQLite（免部署，覆盖 URL 判定）")
+    ap.add_argument("--remote", action="store_true", help="强制走 HTTP 服务（即使未设 NVP_MEMORY_URL）")
     a = ap.parse_args()
 
     if a.sync:
@@ -201,8 +240,18 @@ def main():
         print(f"[mirror] 已写镜像 → {a.mirror}（events={len(events)}）")
         return 0
 
+    # 判定模式：--local 强制本地；否则 NVP_MEMORY_URL 已设 / --url 显式 / --remote → 远程；否则默认本地（零配置）
+    remote_explicit = bool(os.environ.get("NVP_MEMORY_URL")) or (a.url != DEFAULT_URL) or a.remote
+    if a.local or not remote_explicit:
+        ok, fail, reasons = local_ingest(events)
+        mode = "本地模式（--local）" if a.local else "本地模式（默认·零配置）"
+        print(f"[collect] {mode}：写入 {ok} 条，拒绝 {fail} 条 → {LOCAL_DB}")
+        if reasons:
+            print(f"        拒绝原因：{reasons}")
+        print(f"        已聚合并写入 .cache/learnings.json（build_storyboard 将自动参考）")
+        return 0 if fail == 0 else 1
     code, resp = post_events(a.url, a.token, events)
-    print(f"[collect] HTTP {code} → {resp}")
+    print(f"[collect] 远程 HTTP {code} → {resp}")
     return 0 if code == 200 else 1
 
 

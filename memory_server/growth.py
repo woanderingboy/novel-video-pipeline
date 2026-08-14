@@ -6,8 +6,12 @@ memory_server/growth.py — 把 SQLite 中的原始事件聚合成 learnings.jso
 运行方式：
   python memory_server/growth.py [--db data/nvp_memory.db] [--out snapshot/learnings.json]
 
+也可被 scripts/collect.py 在「本地免部署模式」下直接调用：
+  from growth import run_growth
+  run_growth(db_path, out_path)
+
 职责：
-  1. 读取 productions / feedback / failures / priors 四张表。
+  1. 读取 productions / feedback / failures / priors 四张表（连接走 db.get_conn，schema 与 server 一致）。
   2. 计算：总运行数、各维度评分均值、Top 失败模式（聚类 + 建议）、产出风格信号。
   3. 写出 snapshot/learnings.json（skill 侧 load_learnings.py 读取此文件）。
   4. 把聚合得到的稳定知识 upsert 进 priors 表（source=aggregated），供后续查询/加权。
@@ -20,9 +24,9 @@ import json
 import os
 from datetime import datetime, timezone
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DB = os.path.join(HERE, "data", "nvp_memory.db")
-DEFAULT_OUT = os.path.join(HERE, "snapshot", "learnings.json")
+from db import get_conn, snapshot_path, DEFAULT_DB
+
+DEFAULT_OUT = snapshot_path()
 
 # error_type / 指纹关键字 → 给 skill 的具体优化建议
 SUGGESTIONS = {
@@ -159,20 +163,14 @@ def upsert_priors(conn, agg):
     return len(priors)
 
 
-def main():
-    ap = argparse.ArgumentParser(description="聚合记忆库 → learnings.json + priors")
-    ap.add_argument("--db", default=DEFAULT_DB)
-    ap.add_argument("--out", default=DEFAULT_OUT)
-    a = ap.parse_args()
-
-    import sqlite3
-    conn = sqlite3.connect(a.db, timeout=30)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-
-    agg = aggregate(conn)
-    n_priors = upsert_priors(conn, agg)
-    conn.close()
+def run_growth(db_path=DEFAULT_DB, out_path=DEFAULT_OUT):
+    """聚合指定 db → 写出 learnings.json（被 CLI 与 collect 本地模式共用）。"""
+    conn = get_conn(db_path)
+    try:
+        agg = aggregate(conn)
+        n_priors = upsert_priors(conn, agg)
+    finally:
+        conn.close()
 
     learnings = {
         "generated_at": _now_iso(),
@@ -190,12 +188,21 @@ def main():
         "style_signals": agg["style_signals"],
     }
 
-    os.makedirs(os.path.dirname(a.out), exist_ok=True)
-    with open(a.out, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
         json.dump(learnings, f, ensure_ascii=False, indent=2)
 
     print(f"[ok] 聚合完成：{agg['runs']} 次运行，{len(agg['failure_patterns'])} 个失败模式，"
-          f"回灌 {n_priors} 条 priors → {a.out}")
+          f"回灌 {n_priors} 条 priors → {out_path}")
+    return learnings
+
+
+def main():
+    ap = argparse.ArgumentParser(description="聚合记忆库 → learnings.json + priors")
+    ap.add_argument("--db", default=DEFAULT_DB)
+    ap.add_argument("--out", default=DEFAULT_OUT)
+    a = ap.parse_args()
+    run_growth(a.db, a.out)
 
 
 if __name__ == "__main__":

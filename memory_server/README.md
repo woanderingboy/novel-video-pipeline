@@ -32,7 +32,46 @@
 
 ---
 
-## 2. 本地快速试跑（无需 token）
+## 0. 单机免部署（推荐起步，零配置）
+
+**如果你只是自己（单机）用这个 skill 做视频，根本不需要起服务、不需要小服务器。**
+
+`scripts/collect.py` / `scripts/load_learnings.py` 在**未设置 `NVP_MEMORY_URL`** 时会**自动降级为直连 skill 内的 SQLite 文件**（`memory_server/data/nvp_memory.db`），并在采集后自动跑聚合 → 写 `snapshot/learnings.json` → 复制到 `.cache/learnings.json`（供 `build_storyboard.py` 直接参考）。整个闭环在本机一气呵成，**零运维、零部署**。
+
+```bash
+# 什么都不用配，直接跑（自动本地模式）
+python scripts/collect.py --project /path/to/project --platform bilibili
+python scripts/load_learnings.py          # 自动读本地 snapshot
+python scripts/build_storyboard.py --project /path/to/project --platform bilibili
+```
+
+- 想**强制**本地（即使设了 URL）：加 `--local`。
+- 想走 HTTP 服务（部署后）：显式设 `NVP_MEMORY_URL` 或用 `--remote`。
+
+> 何时才需要下面的「公网部署」？—— 只有当你要**多台机器汇总同一份记忆**、**多人协作共享**，或**远程回灌**时才需要。绝大多数个人使用场景，跳过即可。
+
+---
+
+## 1. 本地快速试跑（HTTP 服务模式，可选）
+
+如果你已在本地起了 HTTP 服务（见 §3），可这样试跑：
+
+```bash
+cd memory_server
+python server.py --no-auth --port 8080
+# 另开终端
+python growth.py
+python ../scripts/collect.py --project /path/to/project --platform bilibili --url http://127.0.0.1:8080
+python ../scripts/load_learnings.py --url http://127.0.0.1:8080
+```
+
+---
+
+## 2. 公网部署（推荐 Caddy 反向代理做 TLS）
+
+服务本身只跑 HTTP；TLS 交给 Caddy（自动申请/续期 Let's Encrypt 证书）。
+
+### 2.1 配置 token 与启动
 
 ```bash
 cd memory_server
@@ -60,7 +99,7 @@ python server.py --host 127.0.0.1 --port 8080
 
 > 不设置 token 且不用 `--no-auth` 时，服务会**拒绝所有请求**（安全默认），避免误开裸服务。
 
-### 3.2 Caddyfile（HTTPS 反代）
+### 2.2 Caddyfile（HTTPS 反代）
 
 ```Caddyfile
 memory.your-domain.com {
@@ -75,7 +114,7 @@ caddy reload
 Caddy 自动签发证书。skill 侧把 `NVP_MEMORY_URL` 设为 `https://memory.your-domain.com`、
 `NVP_API_TOKEN` 设为同一串即可。
 
-### 3.3 systemd 守护（可选）
+### 2.3 systemd 守护（可选）
 
 `/etc/systemd/system/nvp-memory.service`：
 
@@ -99,7 +138,7 @@ WantedBy=multi-user.target
 systemctl enable --now nvp-memory
 ```
 
-### 3.4 定时聚合（cron 每小时）
+### 2.4 定时聚合（cron 每小时）
 
 ```cron
 0 * * * *  cd /opt/novel-video-pipeline/memory_server && /usr/bin/python3 growth.py >> /var/log/nvp-growth.log 2>&1
@@ -107,7 +146,7 @@ systemctl enable --now nvp-memory
 
 ---
 
-## 4. 数据模型
+## 3. 数据模型
 
 | 表 | 用途 | 关键字段 |
 |----|------|----------|
@@ -118,7 +157,7 @@ systemctl enable --now nvp-memory
 
 ---
 
-## 5. HTTP 端点
+## 4. HTTP 端点
 
 | 方法 | 路径 | 说明 | 鉴权 |
 |------|------|------|------|
@@ -132,7 +171,7 @@ event `type` 取值：`production` / `feedback` / `failure` / `prior`。
 
 ---
 
-## 6. 备份与迁移
+## 5. 备份与迁移
 
 - SQLite 文件位于 `memory_server/data/nvp_memory.db`（含 WAL）。整库复制即备份。
 - `GET /export` 可导出 JSON 全量，便于离线镜像或换机迁移。
@@ -140,7 +179,7 @@ event `type` 取值：`production` / `feedback` / `failure` / `prior`。
 
 ---
 
-## 7. 安全提醒
+## 6. 安全提醒
 
 - **token 一旦写入过脚本/聊天记录，视为已暴露**，应在 GitHub / 服务器后台轮换（重新生成并设置新 `NVP_API_TOKEN`）。
 - 公网务必走 HTTPS（Caddy），**切勿**把 `--no-auth` 用于公网。

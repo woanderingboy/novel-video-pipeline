@@ -60,6 +60,20 @@ def load_cache():
     return None
 
 
+def load_local_snapshot():
+    """本地免部署模式：直接读 memory_server/snapshot/learnings.json（免起服务）。"""
+    import sys
+    sys.path.insert(0, os.path.join(SKILL_ROOT, "memory_server"))
+    import db as memdb
+    p = memdb.snapshot_path()
+    if os.path.exists(p):
+        try:
+            return json.load(open(p, encoding="utf-8"))
+        except Exception:  # noqa
+            return None
+    return None
+
+
 def save_cache(data):
     os.makedirs(os.path.dirname(CACHE_PATH), exist_ok=True)
     with open(CACHE_PATH, "w", encoding="utf-8") as f:
@@ -97,11 +111,26 @@ def main():
     ap.add_argument("--token", default=DEFAULT_TOKEN)
     ap.add_argument("--project", help="把 learnings 副本写入该目录（learnings.json）")
     ap.add_argument("--no-fetch", action="store_true", help="只读本地缓存，不发请求")
+    ap.add_argument("--local", action="store_true", help="强制本地读 snapshot/learnings.json（免部署，覆盖 URL 判定）")
     ap.add_argument("--out", default=None, help="自定义 learnings 输出路径（默认 .cache/learnings.json 或 <project>/learnings.json）")
     a = ap.parse_args()
 
+    # 本地免部署模式：--local 强制，或 NVP_MEMORY_URL 未设（默认零配置）
+    use_local = a.local or (not os.environ.get("NVP_MEMORY_URL"))
+
     data = None
-    if not a.no_fetch:
+    if a.no_fetch:
+        data = load_cache()
+        print("[ok] 使用本地缓存")
+    elif use_local:
+        data = load_local_snapshot()
+        if data:
+            save_cache(data)
+            print("[ok] 已读取本地 snapshot（memory_server/snapshot/learnings.json）")
+        else:
+            print("[warn] 本地 snapshot 不存在（先跑 collect.py 或 memory_server/growth.py）", file=sys.stderr)
+            data = load_cache()
+    else:
         code, resp = fetch_snapshot(a.url, a.token)
         if code == 200:
             data = resp
@@ -110,9 +139,6 @@ def main():
         else:
             print(f"[warn] 拉取失败 HTTP {code}：{resp}（尝试本地缓存）", file=sys.stderr)
             data = load_cache()
-    else:
-        data = load_cache()
-        print("[ok] 使用本地缓存")
 
     if not data:
         print("[error] 无可用 learnings 数据（先跑 growth.py 或在服务器在线时拉取）", file=sys.stderr)

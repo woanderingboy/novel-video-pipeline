@@ -12,11 +12,7 @@ memory_server/server.py — novel-video-pipeline 自我生长记忆服务器（�
   - 单文件可独立运行：python memory_server/server.py [--host 0.0.0.0] [--port 8080] [--db data/nvp_memory.db] [--no-auth]
   - 公网部署时由 Caddy 反向代理做 TLS（见 memory_server/README.md），本服务只跑 HTTP。
 
-数据模型（SQLite，四张表）：
-  productions  每次产线运行的客观指标（beats / shots / 解析率 / 时长 / 平台 …）
-  feedback     人类评分（1-5，分维度：visual/story/pacing/ip_safety/overall）
-  failures     失败日志（stage / error_type / fingerprint 归一化指纹）
-  priors       风格先验 / 知识（key 唯一，带 weight 置信度，source 标记来源）
+数据库层见同目录 db.py（server.py / growth.py / scripts/collect.py 共用，保证 schema 一致）。
 
 HTTP 端点：
   GET  /health    健康检查（无需鉴权）
@@ -27,233 +23,27 @@ HTTP 端点：
 
 鉴权：Authorization: Bearer <NVP_API_TOKEN>（环境变量或 --token）；--no-auth 跳过（仅本地测试）。
 限速：每 IP 默认 120 次/分钟，超出返回 429。
+
+注意：若你只想在**单机**使用自我生长（不部署公网），其实不需要起这个服务——
+scripts/collect.py / load_learnings.py 在未设置 NVP_MEMORY_URL 时会自动改为直连本地 SQLite。
+本服务仅在「多机汇总 / 多人协作 / 远程回灌」时才需要。见 README「0. 单机免部署」。
 """
 import argparse
 import json
 import os
-import sqlite3
 import sys
 import time
 import threading
-from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DB = os.path.join(HERE, "data", "nvp_memory.db")
+from db import (
+    get_conn, insert_event, query_aggregates, export_all,
+    snapshot_path, DEFAULT_DB, HERE,
+)
 
 # ---------------------------------------------------------------------------
-# 数据库层
-# ---------------------------------------------------------------------------
-
-def _now_iso():
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def get_conn(db_path):
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
-    conn = sqlite3.connect(db_path, timeout=30)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
-    _init_schema(conn)
-    return conn
-
-
-def _init_schema(conn):
-    conn.executescript(
-        """
-        CREATE TABLE IF NOT EXISTS productions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ts TEXT NOT NULL,
-            run_id TEXT,
-            project TEXT,
-            platform TEXT,
-            beats INTEGER,
-            shots INTEGER,
-            resolved_refs INTEGER,
-            unresolved_refs INTEGER,
-            duration_sec REAL,
-            model_notes TEXT,
-            raw TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS feedback (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ts TEXT NOT NULL,
-            run_id TEXT,
-            rating INTEGER,
-            aspect TEXT,
-            comment TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS failures (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ts TEXT NOT NULL,
-            run_id TEXT,
-            stage TEXT,
-            error_type TEXT,
-            message TEXT,
-            fingerprint TEXT
-        );
-        CREATE INDEX IF NOT EXISTS idx_fail_fp ON failures(fingerprint);
-
-        CREATE TABLE IF NOT EXISTS priors (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT UNIQUE NOT NULL,
-            value TEXT,
-            weight REAL DEFAULT 1.0,
-            source TEXT,
-            updated_at TEXT
-        );
-        """
-    )
-    conn.commit()
-
-
-# ---------------------------------------------------------------------------
-# 事件写入
-# ---------------------------------------------------------------------------
-
-def insert_event(conn, ev):
-    """根据 ev['type'] 写入对应表。返回 (ok, reason)。"""
-    t = (ev or {}).get("type")
-    ts = ev.get("ts") or _now_iso()
-    if t == "production":
-        conn.execute(
-            """INSERT INTO productions
-               (ts, run_id, project, platform, beats, shots, resolved_refs,
-                unresolved_refs, duration_sec, model_notes, raw)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                ts, ev.get("run_id"), ev.get("project"), ev.get("platform"),
-                ev.get("beats"), ev.get("shots"), ev.get("resolved_refs"),
-                ev.get("unresolved_refs"), ev.get("duration_sec"),
-                json.dumps(ev.get("model_notes"), ensure_ascii=False)
-                if ev.get("model_notes") is not None else None,
-                json.dumps(ev, ensure_ascii=False),
-            ),
-        )
-        return True, "production"
-    if t == "feedback":
-        conn.execute(
-            """INSERT INTO feedback (ts, run_id, rating, aspect, comment)
-               VALUES (?,?,?,?,?)""",
-            (ts, ev.get("run_id"), ev.get("rating"), ev.get("aspect"), ev.get("comment")),
-        )
-        return True, "feedback"
-    if t == "failure":
-        conn.execute(
-            """INSERT INTO failures (ts, run_id, stage, error_type, message, fingerprint)
-               VALUES (?,?,?,?,?,?)""",
-            (
-                ts, ev.get("run_id"), ev.get("stage"), ev.get("error_type"),
-                ev.get("message"), ev.get("fingerprint") or _fingerprint(ev),
-            ),
-        )
-        return True, "failure"
-    if t == "prior":
-        conn.execute(
-            """INSERT INTO priors (key, value, weight, source, updated_at)
-               VALUES (?,?,?,?,?)
-               ON CONFLICT(key) DO UPDATE SET
-                 value=excluded.value, weight=excluded.weight,
-                 source=excluded.source, updated_at=excluded.updated_at""",
-            (
-                ev.get("key"), json.dumps(ev.get("value"), ensure_ascii=False)
-                if ev.get("value") is not None else None,
-                ev.get("weight", 1.0), ev.get("source", "human"), _now_iso(),
-            ),
-        )
-        return True, "prior"
-    return False, f"unknown type: {t!r}"
-
-
-def _fingerprint(ev):
-    """失败事件的归一化指纹（用于聚类）。"""
-    parts = [str(ev.get("stage") or "?"), str(ev.get("error_type") or "?")]
-    msg = ev.get("message") or ""
-    # 把数字 / id 归一，避免同一类错误因具体数值不同而分散
-    norm = "".join(ch if not ch.isdigit() else "#" for ch in msg)
-    norm = norm[:120]
-    return "|".join(parts) + "::" + norm
-
-
-# ---------------------------------------------------------------------------
-# 聚合查询
-# ---------------------------------------------------------------------------
-
-def query_aggregates(conn, qtype, group=None):
-    if qtype == "failures":
-        rows = conn.execute(
-            """SELECT fingerprint, COUNT(*) AS c,
-                      GROUP_CONCAT(DISTINCT stage) AS stages,
-                      GROUP_CONCAT(DISTINCT error_type) AS etypes
-               FROM failures GROUP BY fingerprint ORDER BY c DESC LIMIT 50"""
-        ).fetchall()
-        return [
-            {
-                "fingerprint": r["fingerprint"],
-                "count": r["c"],
-                "stages": (r["stages"] or "").split(","),
-                "error_types": (r["etypes"] or "").split(","),
-            }
-            for r in rows
-        ]
-    if qtype == "feedback":
-        rows = conn.execute(
-            """SELECT aspect, AVG(rating) AS avg, COUNT(*) AS n
-               FROM feedback GROUP BY aspect ORDER BY n DESC"""
-        ).fetchall()
-        return [{"aspect": r["aspect"], "avg": round(r["avg"], 2), "n": r["n"]} for r in rows]
-    if qtype == "productions":
-        row = conn.execute(
-            """SELECT COUNT(*) AS n, AVG(beats) AS ab, AVG(shots) AS as_,
-                      AVG(resolved_refs) AS ar, AVG(unresolved_refs) AS au,
-                      AVG(duration_sec) AS ad
-               FROM productions"""
-        ).fetchone()
-        return {
-            "runs": row["n"],
-            "avg_beats": round(row["ab"], 2) if row["ab"] is not None else None,
-            "avg_shots": round(row["as_"], 2) if row["as_"] is not None else None,
-            "avg_resolved_refs": round(row["ar"], 2) if row["ar"] is not None else None,
-            "avg_unresolved_refs": round(row["au"], 2) if row["au"] is not None else None,
-            "avg_duration_sec": round(row["ad"], 2) if row["ad"] is not None else None,
-        }
-    if qtype == "priors":
-        rows = conn.execute(
-            "SELECT key, value, weight, source, updated_at FROM priors ORDER BY weight DESC, updated_at DESC"
-        ).fetchall()
-        return [
-            {
-                "key": r["key"], "value": _maybe_json(r["value"]),
-                "weight": r["weight"], "source": r["source"], "updated_at": r["updated_at"],
-            }
-            for r in rows
-        ]
-    return []
-
-
-def _maybe_json(s):
-    if s is None:
-        return None
-    try:
-        return json.loads(s)
-    except Exception:  # noqa
-        return s
-
-
-def export_all(conn):
-    out = {"exported_at": _now_iso()}
-    for name in ("productions", "feedback", "failures", "priors"):
-        rows = conn.execute(f"SELECT * FROM {name} ORDER BY id").fetchall()
-        out[name] = [dict(r) for r in rows]
-    return out
-
-
-# ---------------------------------------------------------------------------
-# HTTP 处理
+# 限速
 # ---------------------------------------------------------------------------
 
 class RateLimiter:
@@ -337,7 +127,7 @@ class Handler(BaseHTTPRequestHandler):
                 qtype = (qs.get("type") or ["failures"])[0]
                 self._send_json(200, {"type": qtype, "data": query_aggregates(conn, qtype)})
             elif path == "/snapshot":
-                snap_path = os.path.join(HERE, "snapshot", "learnings.json")
+                snap_path = snapshot_path()
                 if os.path.exists(snap_path):
                     with open(snap_path, encoding="utf-8") as f:
                         self._send_json(200, json.load(f))
@@ -418,6 +208,10 @@ class Server(ThreadingHTTPServer):
         self.token = token
         self.no_auth = no_auth
         self.limiter = limiter
+
+
+# _now_iso 来自 db 模块（与 insert_event 同命名空间），Handler 用到，做个别名
+from db import _now_iso  # noqa: E402
 
 
 def main():

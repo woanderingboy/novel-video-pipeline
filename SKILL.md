@@ -126,13 +126,15 @@ python scripts/fetch_audio.py --out <DIR>
 
 ## 自我生长（可选 · 数据闭环）
 
-让 skill 随使用**自我生长**：每次产线运行后把客观指标 / 人类评分 / 失败日志回灌进一个小服务器（你的「小服务器」即可），经聚合后把「高频失败模式建议 / 评分 / 风格信号」回灌 skill，下次生成时提前规避。**纯标准库、零依赖、可独立部署在一台小服务器上**，与 skill 本体解耦。完整部署见 `memory_server/README.md`。
+让 skill 随使用**自我生长**：每次产线运行后把客观指标 / 人类评分 / 失败日志回灌进记忆库，经聚合后把「高频失败模式建议 / 评分 / 风格信号」回灌 skill，下次生成时提前规避。**纯标准库、零依赖、可独立部署在一台小服务器上**，与 skill 本体解耦。完整部署见 `memory_server/README.md`。
+
+> **单机用？不用部署。** 不设置 `NVP_MEMORY_URL` 时，`collect.py` / `load_learnings.py` 会**自动直连 skill 内的 SQLite**（`memory_server/data/nvp_memory.db`）并在采集后自动聚合，零配置即可跑完整闭环。只有「多机汇总 / 多人协作 / 远程回灌」才需要起 `server.py`（见下方「服务启动」与 README §2）。
 
 闭环三步：
 
-1. **采集（跑完产线后）**：`python scripts/collect.py --project <DIR> --platform bilibili` 自动从 `script.json` / `storyboard.json` / `storyboard.resolved.json` 读取 beats / shots / 解析率 / 时长等指标，POST 到记忆服务。可追加人类评分 `--feedback 5 overall "节奏很爽"`，或失败日志 `--failures fails.json`。离线机用 `--mirror ./mirror.json --dry-run` 生成镜像，稍后 `collect.py --sync ./mirror.json` 同步。
-2. **聚合（服务器定时）**：`python memory_server/growth.py` 把 SQLite 四表聚合成 `snapshot/learnings.json`，并把稳定知识 upsert 进 `priors` 表。建议用 cron 每小时跑一次（见 README）。
-3. **回灌（下次生成前）**：`python scripts/load_learnings.py` 拉取 `learnings.json` 缓存到 `.cache/learnings.json`；`build_storyboard.py` 自动读取并在生成时打印「自我生长建议」（高频失败模式 → 提前规避，例如未解析参考图、权力轴缺镜），也可 `--no-growth` 关闭。
+1. **采集（跑完产线后）**：`python scripts/collect.py --project <DIR> --platform bilibili` 自动从 `script.json` / `storyboard.json` / `storyboard.resolved.json` 读取 beats / shots / 解析率 / 时长等指标，写入记忆库（**默认本地 SQLite**；若设了 `NVP_MEMORY_URL` 则 POST 到服务）。可追加人类评分 `--feedback 5 overall "节奏很爽"`，或失败日志 `--failures fails.json`。离线机用 `--mirror ./mirror.json --dry-run` 生成镜像，稍后 `collect.py --sync ./mirror.json` 同步上服务器。加 `--local` 可强制本地、`--remote` 强制走服务。
+2. **聚合（本地自动 / 服务器定时）**：本地模式下采集后已自动聚合；HTTP 模式下用 cron 每小时跑 `python memory_server/growth.py`，把 SQLite 四表聚合成 `snapshot/learnings.json`，并把稳定知识 upsert 进 `priors` 表。
+3. **回灌（下次生成前）**：`python scripts/load_learnings.py` 读取 `learnings.json` 缓存到 `.cache/learnings.json`（**默认读本地 snapshot**；设了 URL 则远程拉取；`--local` 强制本地、`--no-fetch` 仅读缓存）；`build_storyboard.py` 自动读取并在生成时打印「自我生长建议」（高频失败模式 → 提前规避，例如未解析参考图、权力轴缺镜），也可 `--no-growth` 关闭。
 
 服务启动：`python memory_server/server.py --no-auth`（本地测试）或 `python memory_server/server.py`（公网，需 `NVP_API_TOKEN` 环境变量 / `--token`；由 Caddy 反向代理做 TLS）。端点：`GET /health`、`POST /ingest`、`GET /query`、`GET /snapshot`、`GET /export`。
 
