@@ -20,3 +20,11 @@ clips/
 # Local secrets
 .env
 *.key
+
+# Self-growth memory server runtime (generated, not portable)
+memory_server/data/
+memory_server/.cache/
+memory_server/snapshot/learnings.json
+.cache/
+mirror.json
+*.mirror.json

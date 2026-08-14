@@ -114,7 +114,8 @@ python scripts/fetch_audio.py --out <DIR>
 - `assets/s2/`：负向词库 `negative-ip.json` + IP 防火墙说明 `negative-ip-firewall.md` + 角色资产方法论 `character-design.md` + 场景资产方法论 `scene-multiview.md`。
 - `assets/s3/`：分镜模板库 `template-library.json`、运镜库 `camera-movements.json`、平台预设 `platform-presets.json`、标签统计 `tag-stats.json`、质量负向词 `negative-quality.md`。
 - `assets/s4/`：已拉取 CC0 音频清单 `audio-manifest.json`。
-- `scripts/`：`fetch_visual_assets.py`（S2 拉图）、`fetch_audio.py`（S4 拉音）、`build_storyboard.py`（S1+S2 → S3 分镜脚手架自动生成，支持 `ref_images` 锚定自动抽取 / `power_dynamic` 自动选角 / `--target-duration` 镜头预算）、`resolve_ref_images.py`（S5 把 `ref_images` 令牌解析为真实图路径，产出 `storyboard.resolved.json`）、`build_ffmpeg_concat.py`（S5 由 storyboard.json 生成 FFmpeg 拼接列表 + 命令）、`validate_pipeline.py`（站间门禁，默认 `--content-rating normal` 零内容限制；`--content-rating child` / `--child` 触发儿童向硬门禁）。
+- `scripts/`：`fetch_visual_assets.py`（S2 拉图）、`fetch_audio.py`（S4 拉音）、`build_storyboard.py`（S1+S2 → S3 分镜脚手架自动生成，支持 `ref_images` 锚定自动抽取 / `power_dynamic` 自动选角 / `--target-duration` 镜头预算 / `--no-growth` 关闭自我生长建议）、`resolve_ref_images.py`（S5 把 `ref_images` 令牌解析为真实图路径，产出 `storyboard.resolved.json`）、`build_ffmpeg_concat.py`（S5 由 storyboard.json 生成 FFmpeg 拼接列表 + 命令）、`validate_pipeline.py`（站间门禁，默认 `--content-rating normal` 零内容限制；`--content-rating child` / `--child` 触发儿童向硬门禁）、`collect.py`（自我生长采集端：把一次运行产物 + 人类评分 + 失败日志回灌记忆服务器）、`load_learnings.py`（自我生长回灌端：从记忆服务器拉取 `learnings.json` 缓存到本地，供 `build_storyboard.py` 读取高频失败模式建议）。
+- `memory_server/`：`server.py`（零依赖记忆服务，4 表 SQLite + Bearer 鉴权 + 限速）、`growth.py`（聚合 → `snapshot/learnings.json` + 回灌 priors）、`.env.example`、`README.md`（Caddy HTTPS / systemd / cron 部署）。
 - `references/`：`architecture-licenses.md`（开源方案借鉴与许可证边界）、`workflow.md`（四站详细契约与用法）、`case-studies.md`（爆款漫剧/短剧运镜·分镜语法借鉴，方法论文献，不照搬 IP）、`benchmark.md`（对比测评：NVP vs ViMax/seedance/ai-shortfilm/ArcReel 等评分矩阵 + 实证自测）、`s5-composite.md`（S5 合成 SOP：五步闭环 + 工具矩阵 + 一致性终检清单）。
 
 ## 注意事项
@@ -122,3 +123,16 @@ python scripts/fetch_audio.py --out <DIR>
 - 大体积图库/音频库不内嵌进 skill（保持可携带）；运行时用脚本拉取，或指向你自己的 CC0 素材目录（如 `./assets/characters`、`S4-音频库/samples/` 这类本地洁净批）。
 - 本 skill 为编排方法论 + 自包含资产，不依赖 ViMax/ArcReel 等外部代码运行。
 - 取得 BHL key / NYPL token 后，可自行在 `fetch_visual_assets.py` 追加 `fetch_bhl()` / `fetch_nypl()` 通道（OBI 已验证无需 key）。
+
+## 自我生长（可选 · 数据闭环）
+
+让 skill 随使用**自我生长**：每次产线运行后把客观指标 / 人类评分 / 失败日志回灌进一个小服务器（你的「小服务器」即可），经聚合后把「高频失败模式建议 / 评分 / 风格信号」回灌 skill，下次生成时提前规避。**纯标准库、零依赖、可独立部署在一台小服务器上**，与 skill 本体解耦。完整部署见 `memory_server/README.md`。
+
+闭环三步：
+
+1. **采集（跑完产线后）**：`python scripts/collect.py --project <DIR> --platform bilibili` 自动从 `script.json` / `storyboard.json` / `storyboard.resolved.json` 读取 beats / shots / 解析率 / 时长等指标，POST 到记忆服务。可追加人类评分 `--feedback 5 overall "节奏很爽"`，或失败日志 `--failures fails.json`。离线机用 `--mirror ./mirror.json --dry-run` 生成镜像，稍后 `collect.py --sync ./mirror.json` 同步。
+2. **聚合（服务器定时）**：`python memory_server/growth.py` 把 SQLite 四表聚合成 `snapshot/learnings.json`，并把稳定知识 upsert 进 `priors` 表。建议用 cron 每小时跑一次（见 README）。
+3. **回灌（下次生成前）**：`python scripts/load_learnings.py` 拉取 `learnings.json` 缓存到 `.cache/learnings.json`；`build_storyboard.py` 自动读取并在生成时打印「自我生长建议」（高频失败模式 → 提前规避，例如未解析参考图、权力轴缺镜），也可 `--no-growth` 关闭。
+
+服务启动：`python memory_server/server.py --no-auth`（本地测试）或 `python memory_server/server.py`（公网，需 `NVP_API_TOKEN` 环境变量 / `--token`；由 Caddy 反向代理做 TLS）。端点：`GET /health`、`POST /ingest`、`GET /query`、`GET /snapshot`、`GET /export`。
+

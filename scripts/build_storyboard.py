@@ -26,6 +26,9 @@ import sys
 
 SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# 自我生长记忆缓存（由 scripts/load_learnings.py 拉取并写入）
+GROWTH_CACHE = os.path.join(SKILL_ROOT, ".cache", "learnings.json")
+
 
 def _load(path):
     if not os.path.exists(path):
@@ -36,6 +39,26 @@ def _load(path):
     except Exception as e:  # noqa
         print(f"[warn] 解析失败 {path}: {e}", file=sys.stderr)
         return None
+
+
+def load_growth_suggestions(no_growth=False, top_n=5):
+    """读取本地 learnings 缓存，返回失败模式建议列表（供脚手架生成时提前规避）。
+
+    返回 [{"fingerprint","count","suggestion"}]。无缓存或 --no-growth 时返回 []。
+    """
+    if no_growth:
+        return []
+    if not os.path.exists(GROWTH_CACHE):
+        return []
+    data = _load(GROWTH_CACHE)
+    if not data:
+        return []
+    patterns = data.get("failure_patterns", []) or []
+    return [
+        {"fingerprint": p.get("fingerprint"), "count": p.get("count"),
+         "suggestion": p.get("suggestion")}
+        for p in patterns[:top_n]
+    ]
 
 
 # beat 类型 → camera-movements subject_aware_map 键 的别名表
@@ -182,6 +205,8 @@ def main():
     ap.add_argument("--out", default=None, help="输出 storyboard.json 路径（默认 <project>/storyboard.json）")
     ap.add_argument("--target-duration", type=int, default=None,
                     help="镜头总时长预算（秒）；按平台合法时长集自动分配到各镜（末镜更长）。默认末镜取最长合法值。")
+    ap.add_argument("--no-growth", action="store_true",
+                    help="不读取自我生长记忆缓存（.cache/learnings.json）的建议")
     args = ap.parse_args()
 
     proj = args.project
@@ -297,6 +322,24 @@ def main():
     # 镜头预算 / pacing：分配时长
     allocate_durations(shots, durations, args.target_duration)
 
+    # 摘要命中计数（供摘要与自我生长增强共用）
+    ref_char_hits = sum(1 for s in shots if s["character_ref"])
+    ref_scene_hits = sum(1 for s in shots if s["scene_ref"].get("scene_id"))
+    ref_img_hits = sum(1 for s in shots if s.get("ref_images"))
+    total_dur = sum(s.get("duration_s", 0) for s in shots)
+
+    # 自我生长：读取记忆缓存中的高频失败模式建议（提前规避）
+    growth = load_growth_suggestions(args.no_growth)
+    # 针对性增强：若本次有镜头缺参考图锚定，且记忆中存在未解析引用类建议，则优先提示
+    if not args.no_growth and ref_img_hits < len(shots):
+        for p in growth:
+            if p.get("fingerprint") and "unresolved" in (p["fingerprint"] or ""):
+                p["suggestion"] = (
+                    (p.get("suggestion") or "")
+                    + "（本次即有 "
+                    + f"{len(shots) - ref_img_hits} 镜缺少 ref_images 锚定，建议优先补齐）"
+                )
+
     out = {
         "platform": args.platform,
         "aspect_ratio": aspect,
@@ -304,21 +347,23 @@ def main():
         "note": "脚手架草稿：请人工精修相机角度/情绪/台词/节奏后再送视频模型。",
         "shots": shots,
     }
+    if growth:
+        out["_growth_suggestions"] = growth
     out_path = args.out or os.path.join(proj, "storyboard.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
 
     # 摘要
-    ref_char_hits = sum(1 for s in shots if s["character_ref"])
-    ref_scene_hits = sum(1 for s in shots if s["scene_ref"].get("scene_id"))
-    ref_img_hits = sum(1 for s in shots if s.get("ref_images"))
-    total_dur = sum(s.get("duration_s", 0) for s in shots)
     print(f"[ok] 生成 {len(shots)} 镜（beats {len(beats)}）→ {out_path}")
     print(f"     角色资产引用 {ref_char_hits}/{len(shots)} 镜；场景资产引用 {ref_scene_hits}/{len(shots)} 镜；参考图锚定 {ref_img_hits}/{len(shots)} 镜")
     print(f"     IP 防火墙令牌 {len(ip_tokens)} 个已全覆盖（negative_prompt 合并 {len(quality_tokens)} 质量负向）")
     print(f"     平台 {args.platform}｜比例 {aspect}｜"
           + (f"总时长预算 {args.target_duration}s → 实分配 {total_dur}s（末镜 {shots[-1]['duration_s']}s）"
              if args.target_duration else f"默认时长 {default_dur}s，末镜 {shots[-1]['duration_s']}s"))
+    if growth:
+        print("     自我生长建议（来自记忆库 Top 失败模式）：")
+        for p in growth:
+            print(f"       - [{p['count']}×] {p['suggestion']}")
     return 0
 
 
